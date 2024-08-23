@@ -4,7 +4,7 @@
 - Tool : Android Studio
 	- Version : Koala
 	- Java : Java 8
-	- Android Gradle Plugin : 8.5.0
+	- Android Gradle Plugin : 8.5.1
 	- Gradle Version : 8.7
 - - -
 ### 사용된 오픈소스 라이브러리 목록
@@ -23,6 +23,7 @@
 | Google Place SDK for Android (New) | 구글 지도에서 장소 검색 기능을 구현 |
 | Google AdMob - Mobile Ads SDK for Android | 구글 광고를 통한 유지비 확보를 목표로 광고 구현 |
 | Firebase | 구글 로그인 & 사용자 분석 및 구글 광고 |
+| Taggun | OCR 구현 |
 | 백엔드 API | 비즈니스 로직 구현을 위한 API |
 - - -
 ### 사용된 그외의 라이브러리 목록
