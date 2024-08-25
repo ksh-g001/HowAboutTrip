@@ -9,10 +9,6 @@
         android:title="@string/menu_sch_date_change"/>
 
     <item
-        android:id="@+id/menu_bill_edit"
-        android:title="@string/edit"/>
-
-    <item
         android:id="@+id/menu_bill_delete"
         android:title="@string/delete"/>
 

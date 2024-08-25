@@ -32,14 +32,13 @@ import com.project.how.data_class.recyclerview.schedule.AiSchedule
 import com.project.how.data_class.recyclerview.schedule.DaysSchedule
 import com.project.how.data_class.recyclerview.schedule.Schedule
 import com.project.how.databinding.ActivityCalendarEditBinding
-import com.project.how.interface_af.OnDateTimeListener
+import com.project.how.interface_af.OnDateListener
 import com.project.how.interface_af.OnDesListener
 import com.project.how.interface_af.OnOrderChangeListener
 import com.project.how.interface_af.OnScheduleListener
-import com.project.how.interface_af.interface_ada.ItemStartDragListener
-import com.project.how.view.activity.MainActivity
+import com.project.how.interface_af.interface_ada.ItemDragListener
 import com.project.how.view.dialog.AiScheduleDialog
-import com.project.how.view.dialog.DatePickerDialog
+import com.project.how.view.dialog.ScheduleDatePickerDialog
 import com.project.how.view.dialog.OrderChangeDialog
 import com.project.how.view.dialog.bottom_sheet_dialog.DesBottomSheetDialog
 import com.project.how.view.dialog.bottom_sheet_dialog.EditScheduleBottomSheetDialog
@@ -62,7 +61,7 @@ import kotlin.math.abs
 
 
 class CalendarEditActivity
-    : AppCompatActivity(), OnMapReadyCallback, DaysScheduleEditAdapter.OnItemClickListener, OnScheduleListener, OnDesListener, OnDateTimeListener, OnOrderChangeListener {
+    : AppCompatActivity(), OnMapReadyCallback, DaysScheduleEditAdapter.OnItemClickListener, OnScheduleListener, OnDesListener, OnDateListener, OnOrderChangeListener {
     private lateinit var binding : ActivityCalendarEditBinding
     private val viewModel : ScheduleViewModel by viewModels()
     private val calendarViewModel : CalendarViewModel by viewModels()
@@ -106,16 +105,17 @@ class CalendarEditActivity
                 adapter = DaysScheduleEditAdapter(data.dailySchedule[selectedDays], this@CalendarEditActivity, data.currency, this@CalendarEditActivity)
                 binding.daySchedules.adapter = adapter
 
-                val mCallback = RecyclerViewItemTouchHelperCallback(adapter)
+                val mCallback = RecyclerViewItemTouchHelperCallback(adapter, binding.scrollView)
                 val mItemTouchHelper = ItemTouchHelper(mCallback)
                 mItemTouchHelper.attachToRecyclerView(binding.daySchedules)
 
-                adapter.itemDragListener(object : ItemStartDragListener {
+                adapter.itemDragListener(object : ItemDragListener {
                     override fun onDropActivity(
                         initList: MutableList<DaysSchedule>,
                         changeList: MutableList<DaysSchedule>
                     ) {
                         Log.d("addOnItemTouchListener", "itemDragListener\ndrop and getMapAsync")
+                        data.dailySchedule[selectedDays] = changeList
                         supportMapFragment.getMapAsync(this@CalendarEditActivity)
                     }
 
@@ -349,7 +349,8 @@ class CalendarEditActivity
     }
 
     private fun showOrderChange(position: Int){
-        val order = OrderChangeDialog(data.dailySchedule[selectedDays], position, this)
+        val todos = data.dailySchedule[selectedDays].map { it.todo }.toMutableList()
+        val order = OrderChangeDialog(todos, position, this)
         order.show(supportFragmentManager, "OrderChangeDialog")
     }
 
@@ -415,7 +416,7 @@ class CalendarEditActivity
     override fun onMoreMenuDateChangeClickListener(data: DaysSchedule, position: Int) {
         lifecycleScope.launch {
             calendarViewModel.getDateList(this@CalendarEditActivity.data.startDate, this@CalendarEditActivity.data.dailySchedule.lastIndex).collect{dates->
-                val datepicker = DatePickerDialog(data, dates, position, selectedDays, this@CalendarEditActivity)
+                val datepicker = ScheduleDatePickerDialog(data, dates, position, selectedDays, this@CalendarEditActivity)
                 datepicker.show(supportFragmentManager, "DatePickerDialog")
             }
         }

@@ -16,6 +16,7 @@ import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.ReceiptList
 import com.project.how.databinding.ActivityBillBinding
 import com.project.how.view.dialog.AiScheduleDialog
+import com.project.how.view.dialog.RecordDatePickerDialog
 import com.project.how.view.dp.DpPxChanger
 import com.project.how.view_model.RecordViewModel
 import kotlinx.coroutines.launch
@@ -26,7 +27,10 @@ import java.time.temporal.ChronoUnit
 import java.util.Locale
 
 
-class BillActivity : AppCompatActivity(), BillDaysAdapter.OnItemClickListener {
+class BillActivity :
+    AppCompatActivity(),
+    BillDaysAdapter.OnItemClickListener,
+    RecordDatePickerDialog.OnDateSetListener {
     private lateinit var binding : ActivityBillBinding
     private val recordViewModel : RecordViewModel by viewModels()
     private lateinit var adapter : BillDaysAdapter
@@ -173,6 +177,7 @@ class BillActivity : AppCompatActivity(), BillDaysAdapter.OnItemClickListener {
         }
     }
 
-    override fun onMoreMenuEditClickListener(data: ReceiptList, position: Int) {
+    override fun onDateSetListener(receiptId: Long, newDate: String) {
+
     }
 }

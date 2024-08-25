@@ -1,7 +1,6 @@
 package com.project.how.adapter.recyclerview.schedule
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -13,9 +12,8 @@ import com.project.how.R
 import com.project.how.data_class.recyclerview.schedule.DaysSchedule
 import com.project.how.databinding.CalendarDaysScheduleEditItemBinding
 import com.project.how.interface_af.interface_ada.ItemMoveListener
-import com.project.how.interface_af.interface_ada.ItemStartDragListener
+import com.project.how.interface_af.interface_ada.ItemDragListener
 import java.text.NumberFormat
-import java.util.Collections
 import java.util.Locale
 
 class DaysScheduleEditAdapter (
@@ -27,7 +25,7 @@ class DaysScheduleEditAdapter (
     : RecyclerView.Adapter<DaysScheduleEditAdapter.ViewHolder>(), ItemMoveListener, PopupMenu.OnMenuItemClickListener {
     private var dailySchedule = data
     private var initList: MutableList<DaysSchedule> = mutableListOf()
-    private var onItemDragListener: ItemStartDragListener? = null
+    private var onItemDragListener: ItemDragListener? = null
     private var currentPosition = -1
     private var currentData : DaysSchedule? = null
 
@@ -125,7 +123,7 @@ class DaysScheduleEditAdapter (
     }
 
 
-    fun itemDragListener(startDrag: ItemStartDragListener) {
+    fun itemDragListener(startDrag: ItemDragListener) {
         this.onItemDragListener = startDrag
     }
 
@@ -150,13 +148,6 @@ class DaysScheduleEditAdapter (
         notifyItemChanged(position)
     }
 
-    fun swap(fromPosition: Int, toPosition: Int){
-        val temp = dailySchedule[fromPosition]
-        dailySchedule[fromPosition] = dailySchedule[toPosition]
-        dailySchedule[toPosition] = temp
-        notifyItemMoved(fromPosition, toPosition)
-    }
-
     fun getData() = dailySchedule
 
     fun getData(position: Int) = dailySchedule[position]
@@ -173,19 +164,17 @@ class DaysScheduleEditAdapter (
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        Log.d("addOnItemTouchListener", "onItemMove start\nfrom : $fromPosition\tto : $toPosition")
-        if (fromPosition < toPosition) {
-            for (i in fromPosition until toPosition) {
-                Collections.swap(dailySchedule, i, i + 1)
-            }
-        } else {
-            for (i in fromPosition downTo toPosition + 1) {
-                Collections.swap(dailySchedule, i, i - 1)
-            }
+        if (fromPosition < 0 || fromPosition >= dailySchedule.size ||
+            toPosition < 0 || toPosition >= dailySchedule.size) {
+            return false
         }
-        Log.d("addOnItemTouchListener", "onItemMove if for end")
+
+        val temp = dailySchedule[fromPosition]
+        dailySchedule[fromPosition] = dailySchedule[toPosition]
+        dailySchedule[toPosition] = temp
+
         notifyItemMoved(fromPosition, toPosition)
-        Log.d("addOnItemTouchListener", "onItemMove notifyItemMoved end")
+        onDropAdapter(fromPosition, toPosition)
         return true
     }
 

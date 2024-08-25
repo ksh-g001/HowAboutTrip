@@ -12,13 +12,15 @@ import com.project.how.R
 import com.project.how.data_class.dto.recode.receipt.ReceiptList
 import com.project.how.data_class.dto.recode.receipt.StoreType
 import com.project.how.databinding.BillDaysDetailItemBinding
+import com.project.how.interface_af.interface_ada.ItemMoveListener
 
 class BillDaysAdapter(
     private var billDetails : MutableList<ReceiptList>,
     private val context : Context,
     private var currency : String,
     private val onItemClickListener: OnItemClickListener
-) : RecyclerView.Adapter<BillDaysAdapter.ViewHolder>(), PopupMenu.OnMenuItemClickListener {
+) : RecyclerView.Adapter<BillDaysAdapter.ViewHolder>(), PopupMenu.OnMenuItemClickListener,
+    ItemMoveListener {
     private var currentPosition = -1
     private var currentData : ReceiptList? = null
     inner class ViewHolder(val binding : BillDaysDetailItemBinding) : RecyclerView.ViewHolder(binding.root){
@@ -82,9 +84,6 @@ class BillDaysAdapter(
             R.id.menu_bill_date_change -> {
                 onItemClickListener.onMoreMenuDateChangeClickListener(currentData!!, currentPosition)
             }
-            R.id.menu_bill_edit -> {
-                onItemClickListener.onMoreMenuEditClickListener(currentData!!, currentPosition)
-            }
             R.id.menu_bill_delete -> {
                 onItemClickListener.onMoreMenuDeleteClickListener(currentData!!.receiptId, currentPosition)
             }
@@ -128,11 +127,21 @@ class BillDaysAdapter(
         return removedPrice
     }
 
+    fun getData(receiptId : Long) = billDetails.first { it.receiptId == receiptId }
+    fun getData(position: Int) = billDetails[position]
+
     interface OnItemClickListener{
         fun onItemClickListener(data : ReceiptList, position: Int)
         fun onMoreMenuDateChangeClickListener(data : ReceiptList, position: Int)
         fun onMoreMenuOrderChangeClickListener(position: Int)
         fun onMoreMenuDeleteClickListener(id: Long, position: Int)
-        fun onMoreMenuEditClickListener(data : ReceiptList, position: Int)
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDropAdapter(fromPosition: Int, toPosition: Int): Boolean {
+        TODO("Not yet implemented")
     }
 }

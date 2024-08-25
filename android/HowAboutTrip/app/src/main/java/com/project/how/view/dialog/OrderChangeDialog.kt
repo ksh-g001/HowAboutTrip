@@ -15,7 +15,7 @@ import com.project.how.data_class.recyclerview.schedule.DaysSchedule
 import com.project.how.databinding.DialogOrderChangeBinding
 import com.project.how.interface_af.OnOrderChangeListener
 
-class OrderChangeDialog(private val data : MutableList<DaysSchedule>, private val currentPosition : Int, private val onOrderChangeListener: OnOrderChangeListener) : DialogFragment(), RadioButtonAdapter.OnItemClickListener {
+class OrderChangeDialog(private val data : MutableList<String>, private val currentPosition : Int, private val onOrderChangeListener: OnOrderChangeListener) : DialogFragment(), RadioButtonAdapter.OnItemClickListener {
     private var _binding : DialogOrderChangeBinding? = null
     private val binding : DialogOrderChangeBinding
         get() = _binding!!
@@ -27,7 +27,7 @@ class OrderChangeDialog(private val data : MutableList<DaysSchedule>, private va
         super.onCreate(savedInstanceState)
         days = mutableListOf()
         for (i in 1..data.size){
-            days.add("${i}번째 : ${data[i-1].todo}")
+            days.add("${i}번째 : ${data[i-1]}")
         }
     }
 

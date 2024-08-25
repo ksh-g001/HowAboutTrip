@@ -29,7 +29,7 @@ data class ReceiptList (
     @SerializedName("orderNum")
     val orderNum: Long,
     @SerializedName("purchaseDate")
-    val purchaseDate: String
+    var purchaseDate: String
 )
 
 enum class StoreType {
