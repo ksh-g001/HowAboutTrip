@@ -153,7 +153,7 @@ class BillActivity :
         messageResId?.let {
             Toast.makeText(this, getString(it, result.toString()), Toast.LENGTH_SHORT).show()
             binding.swipeRefreshLayout.isRefreshing = false
-        } ?: if (backPressed) finish() else recordViewModel.getReceiptList(id)
+        } ?: if (backPressed) moveBillList() else recordViewModel.getReceiptList(id)
     }
 
     private fun init() {
@@ -258,6 +258,13 @@ class BillActivity :
         }
     }
     private fun getChangeOrderReceipt() : List<ChangeOrderReceiptRequest> = receiptList.map { ChangeOrderReceiptRequest(it.receiptId, it.purchaseDate, it.orderNum) }
+
+    private fun moveBillList(){
+        val intent = Intent(this, BillListActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        startActivity(intent)
+        finish()
+    }
 
     override fun onItemClickListener(data: ReceiptList, position: Int) {
         val intent = Intent(this, BillInputActivity::class.java)
