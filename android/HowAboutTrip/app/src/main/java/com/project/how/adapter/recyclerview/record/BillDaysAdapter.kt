@@ -9,20 +9,25 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.project.how.R
+import com.project.how.data_class.dto.recode.receipt.ChangeOrderReceiptRequest
 import com.project.how.data_class.dto.recode.receipt.ReceiptList
 import com.project.how.data_class.dto.recode.receipt.StoreType
 import com.project.how.databinding.BillDaysDetailItemBinding
+import com.project.how.interface_af.interface_ada.ItemDragListener
 import com.project.how.interface_af.interface_ada.ItemMoveListener
 
 class BillDaysAdapter(
     private var billDetails : MutableList<ReceiptList>,
     private val context : Context,
     private var currency : String,
-    private val onItemClickListener: OnItemClickListener
+    private val onItemClickListener: OnItemClickListener,
 ) : RecyclerView.Adapter<BillDaysAdapter.ViewHolder>(), PopupMenu.OnMenuItemClickListener,
     ItemMoveListener {
     private var currentPosition = -1
     private var currentData : ReceiptList? = null
+    private var orderChange = false
+    private var onItemDragListener: ItemDragListener<ChangeOrderReceiptRequest>? = null
+
     inner class ViewHolder(val binding : BillDaysDetailItemBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(data : ReceiptList, position: Int){
             binding.date.text = "${data.purchaseDate} 구매"
@@ -115,6 +120,13 @@ class BillDaysAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateDate(receiptId: Long, newDate : String){
+        orderChange = true
+        billDetails.first { it.receiptId == receiptId }.purchaseDate = newDate
+        billDetails.remove(billDetails.first { it.receiptId == receiptId })
+        notifyDataSetChanged()
+    }
+
     fun add(newData : ReceiptList){
         billDetails.add(newData)
         notifyItemInserted(billDetails.lastIndex)
@@ -127,8 +139,22 @@ class BillDaysAdapter(
         return removedPrice
     }
 
+    fun swap(fromPosition : Int, toPosition : Int){
+        orderChange = true
+        val temp = billDetails[fromPosition]
+        billDetails[fromPosition] = billDetails[toPosition]
+        billDetails[toPosition] = temp
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
     fun getData(receiptId : Long) = billDetails.first { it.receiptId == receiptId }
     fun getData(position: Int) = billDetails[position]
+    fun getDataAllName() = billDetails.map { it.storeName }
+    fun getChangeOrderReceipt() : List<ChangeOrderReceiptRequest> = emptyList()
+
+    fun addItemDragListener(listener : ItemDragListener<ChangeOrderReceiptRequest>){
+        onItemDragListener = listener
+    }
 
     interface OnItemClickListener{
         fun onItemClickListener(data : ReceiptList, position: Int)
@@ -138,10 +164,19 @@ class BillDaysAdapter(
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        TODO("Not yet implemented")
+        if (fromPosition < 0 || fromPosition >= billDetails.size ||
+            toPosition < 0 || toPosition >= billDetails.size) {
+            return false
+        }
+
+        swap(fromPosition, toPosition)
+        onDropAdapter(billDetails[fromPosition].orderNum, billDetails[toPosition].orderNum)
+
+        return true
     }
 
-    override fun onDropAdapter(fromPosition: Int, toPosition: Int): Boolean {
-        TODO("Not yet implemented")
+    override fun onDropAdapter(fromPosition: Long, toPosition: Long): Boolean {
+        onItemDragListener?.onDropActivity(getChangeOrderReceipt(), fromPosition, toPosition)
+        return true
     }
 }

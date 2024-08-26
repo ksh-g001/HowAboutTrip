@@ -109,13 +109,14 @@ class CalendarEditActivity
                 val mItemTouchHelper = ItemTouchHelper(mCallback)
                 mItemTouchHelper.attachToRecyclerView(binding.daySchedules)
 
-                adapter.itemDragListener(object : ItemDragListener {
+                adapter.addItemDragListener(object : ItemDragListener<DaysSchedule> {
                     override fun onDropActivity(
-                        initList: MutableList<DaysSchedule>,
-                        changeList: MutableList<DaysSchedule>
+                        changeList: List<DaysSchedule>,
+                        fromPosition: Long,
+                        toPosition: Long
                     ) {
                         Log.d("addOnItemTouchListener", "itemDragListener\ndrop and getMapAsync")
-                        data.dailySchedule[selectedDays] = changeList
+                        data.dailySchedule[selectedDays] = changeList.toMutableList()
                         supportMapFragment.getMapAsync(this@CalendarEditActivity)
                     }
 

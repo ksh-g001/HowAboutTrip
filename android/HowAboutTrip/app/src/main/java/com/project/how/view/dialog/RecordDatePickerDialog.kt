@@ -29,7 +29,7 @@ class RecordDatePickerDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.dialog_schedule_datepicker, container,false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.dialog_record_datepicker, container,false)
         binding.date = this
         binding.lifecycleOwner = viewLifecycleOwner
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

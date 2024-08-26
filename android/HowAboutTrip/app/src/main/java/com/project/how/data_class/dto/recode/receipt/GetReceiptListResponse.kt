@@ -27,7 +27,7 @@ data class ReceiptList (
     @SerializedName("price")
     val price: Double,
     @SerializedName("orderNum")
-    val orderNum: Long,
+    var orderNum: Long,
     @SerializedName("purchaseDate")
     var purchaseDate: String
 )

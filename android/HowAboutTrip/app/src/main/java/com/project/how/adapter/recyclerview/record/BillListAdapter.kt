@@ -23,9 +23,6 @@ class BillListAdapter (
             binding.cost.text = context.getString(R.string.total_cost) + " ${(data.totalPrice*100).roundToLong().toDouble()/100} ${data.currency}"
             binding.count.text = context.getString(R.string.bill_count, data.count.toString())
 
-            binding.delete.setOnClickListener {
-                onItemClickListener.onDeleteButtonClickListener(data.id, position)
-            }
             itemView.setOnClickListener {
                 onItemClickListener.onItemClickListener(data.id)
             }
@@ -66,6 +63,5 @@ class BillListAdapter (
 
     interface OnItemClickListener{
         fun onItemClickListener(id: Long)
-        fun onDeleteButtonClickListener(id: Long, position: Int)
     }
 }

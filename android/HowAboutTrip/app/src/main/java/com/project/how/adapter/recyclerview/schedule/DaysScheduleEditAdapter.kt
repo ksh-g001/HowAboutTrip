@@ -24,8 +24,7 @@ class DaysScheduleEditAdapter (
 )
     : RecyclerView.Adapter<DaysScheduleEditAdapter.ViewHolder>(), ItemMoveListener, PopupMenu.OnMenuItemClickListener {
     private var dailySchedule = data
-    private var initList: MutableList<DaysSchedule> = mutableListOf()
-    private var onItemDragListener: ItemDragListener? = null
+    private var onItemDragListener: ItemDragListener<DaysSchedule>? = null
     private var currentPosition = -1
     private var currentData : DaysSchedule? = null
 
@@ -123,8 +122,8 @@ class DaysScheduleEditAdapter (
     }
 
 
-    fun itemDragListener(startDrag: ItemDragListener) {
-        this.onItemDragListener = startDrag
+    fun addItemDragListener(listener: ItemDragListener<DaysSchedule>) {
+        onItemDragListener = listener
     }
 
     fun update(data : MutableList<DaysSchedule>){
@@ -174,12 +173,12 @@ class DaysScheduleEditAdapter (
         dailySchedule[toPosition] = temp
 
         notifyItemMoved(fromPosition, toPosition)
-        onDropAdapter(fromPosition, toPosition)
+        onDropAdapter(fromPosition.toLong(), toPosition.toLong())
         return true
     }
 
-    override fun onDropAdapter(fromPosition: Int, toPosition: Int) : Boolean {
-        onItemDragListener?.onDropActivity(initList, dailySchedule)
+    override fun onDropAdapter(fromPosition: Long, toPosition: Long): Boolean {
+        onItemDragListener?.onDropActivity(dailySchedule,fromPosition.toLong(), toPosition.toLong())
         return true
     }
 

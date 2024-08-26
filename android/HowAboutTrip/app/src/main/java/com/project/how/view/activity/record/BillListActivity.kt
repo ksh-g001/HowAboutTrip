@@ -43,8 +43,4 @@ class BillListActivity : AppCompatActivity(), BillListAdapter.OnItemClickListene
         startActivity(intent)
         finish()
     }
-
-    override fun onDeleteButtonClickListener(id: Long, position: Int) {
-        //adapter.delete(position)
-    }
 }

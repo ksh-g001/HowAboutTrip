@@ -1,12 +1,15 @@
 package com.project.how.network.api_interface
 
 import com.project.how.data_class.dto.EmptyResponse
+import com.project.how.data_class.dto.ErrorResponse
+import com.project.how.data_class.dto.recode.receipt.ChangeOrderReceiptRequest
 import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.GetReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.ReceiptSimpleList
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -49,4 +52,9 @@ interface RecordService {
         @Part receiptImg : MultipartBody.Part?
     ) : Call<String>
 
+    @PUT("receipts/order/{scheduleId}")
+    fun changeOrderReceipt(
+        @Path("scheduleId", encoded = true) scheduleId : Long,
+        @Body changeOrderReceiptRequest: List<ChangeOrderReceiptRequest>
+    ) : Call<ErrorResponse?>
 }

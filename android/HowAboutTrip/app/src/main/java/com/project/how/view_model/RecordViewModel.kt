@@ -12,8 +12,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.project.how.BuildConfig
 import com.project.how.data_class.dto.EmptyResponse
+import com.project.how.data_class.dto.ErrorResponse
 import com.project.how.data_class.dto.recode.ocr.OcrResponse
 import com.project.how.data_class.dto.recode.ocr.ProductLineItem
+import com.project.how.data_class.dto.recode.receipt.ChangeOrderReceiptRequest
 import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetailListItem
@@ -340,6 +342,49 @@ class RecordViewModel : ViewModel() {
             }
         }
 
+    fun changeOrderReceipt(scheduleId: Long, changeOrderReceiptRequest: List<ChangeOrderReceiptRequest>) = callbackFlow<Int>{
+        RecordRetrofit.getApiService()?.let { apiService->
+            apiService.changeOrderReceipt(scheduleId, changeOrderReceiptRequest)
+                .enqueue(object : Callback<ErrorResponse?>{
+                    override fun onResponse(
+                        p0: Call<ErrorResponse?>,
+                        p1: Response<ErrorResponse?>
+                    ) {
+                        try{
+                            when(p1.code()){
+                                SUCCESS->{
+                                    trySend(SUCCESS)
+                                }
+                                BAD_REQUEST->{
+                                    val error = p1.body()
+                                    error?.let {
+                                        if (it.errorMessage == "모든 영수증 ID와 날짜를 제공해야 합니다.")
+                                            trySend(NOT_ALL)
+                                        else
+                                            trySend(DUPLICATE_ORDER_NUM)
+                                    }
+                                }
+                                else->{
+                                    trySend(UNKNOWN)
+                                }
+                            }
+                        }catch (e : Exception){
+                            Log.e("changeOrderReceipt", "code : ${p1.code()} error : ${e.message}")
+                            trySend(UNKNOWN)
+                        }
+                    }
+
+                    override fun onFailure(p0: Call<ErrorResponse?>, p1: Throwable) {
+                        Log.e("changeOrderReceipt", "onFailure\nerror : ${p1.message}")
+                        trySend(NETWORK_FAILED)
+                    }
+
+                })
+        } ?: close()
+
+        awaitClose()
+    }.flowOn(Dispatchers.IO)
+
     private fun getImageType(file: File) : String{
         val mediaType = when {
             file.extension.equals("jpg", true) || file.extension.equals("jpeg", true) -> "image/jpeg"
@@ -449,9 +494,29 @@ class RecordViewModel : ViewModel() {
         return sd.plusDays(tabNum.toLong()).format(formatter)
     }
 
+    fun getDatesList(startDate: String, endDate: String) : List<String>{
+        val sd = LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE)
+        val ed = LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE)
+
+        val datesList = mutableListOf<String>()
+
+        var currentDate = sd
+        while (currentDate <= ed) {
+            datesList.add(currentDate.toString())
+            currentDate = currentDate.plusDays(1)
+        }
+
+        return datesList
+    }
+
 
     companion object{
         const val SUCCESS = 200
         const val NOT_FOUND = 404
+        const val BAD_REQUEST = 400
+        const val NOT_ALL = -400
+        const val DUPLICATE_ORDER_NUM = -401
+        const val UNKNOWN = -1
+        const val NETWORK_FAILED = -2
     }
 }
