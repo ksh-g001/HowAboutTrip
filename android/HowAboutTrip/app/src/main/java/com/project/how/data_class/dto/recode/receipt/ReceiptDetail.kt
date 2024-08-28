@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class ReceiptDetail(
     @SerializedName("scheduleId")
-    val id : Long,
+    var id : Long,
     @SerializedName("storeName")
     var storeName : String?,
     @SerializedName("storeType")
-    val storeType: StoreType,
+    var storeType: StoreType,
     @SerializedName("purchaseDate")
-    val purchaseDate : String,
+    var purchaseDate : String,
     @SerializedName("totalPrice")
     var totalPrice : Double,
     @SerializedName("receiptDetails")

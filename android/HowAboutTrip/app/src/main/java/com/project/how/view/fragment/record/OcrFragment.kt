@@ -170,6 +170,8 @@ class OcrFragment : Fragment(), BillDetailsAdapter.OnPriceListener, OnYesOrNoLis
         super.onViewCreated(view, savedInstanceState)
         if (receiptId > -1){
             requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                isEnabled = false
+                close()
             }
         }
     }
@@ -271,10 +273,10 @@ class OcrFragment : Fragment(), BillDetailsAdapter.OnPriceListener, OnYesOrNoLis
             try {
                 val storeName = binding.title.text.toString()
                 if (storeName.isNullOrBlank()) data.storeName = getString(R.string.empty_title) else data.storeName = storeName
-                    data.totalPrice = totalPrice
-                    data.receiptDetails = adapter.getAllData()
-                    Log.d("OcrFragment", "size : ${data.receiptDetails.size}\ndata : ${data.receiptDetails[0].title}\t ${data.receiptDetails[0].count}\t ${data.receiptDetails[0].itemPrice}")
-                    recordViewModel.updateReceipt(requireContext(), receiptId, data)
+                data.totalPrice = totalPrice
+                data.receiptDetails = adapter.getAllData()
+                Log.d("OcrFragment", "size : ${data.receiptDetails.size}\ndata : ${data.receiptDetails[0].title}\t ${data.receiptDetails[0].count}\t ${data.receiptDetails[0].itemPrice}")
+                recordViewModel.updateReceipt(requireContext(), receiptId, data)
 
             }catch (e: Exception){
                 Toast.makeText(requireContext(), getString(R.string.error_message_simple, getString(

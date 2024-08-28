@@ -66,7 +66,19 @@ class BillInputIntroFragment : Fragment(), OnYesOrNoListener {
     }
 
     fun nonOcr() {
-        findNavController().navigate(BillInputIntroFragmentDirections.actionBillInputIntroFragmentToBillNonOcrFragment())
+        try {
+            val activity = activity as? BillInputActivity
+            val action = BillInputIntroFragmentDirections.actionBillInputIntroFragmentToBillNonOcrFragment(
+                activity?.getCurrentDate() ?: "알 수 없음",
+                activity?.getCurrency() ?: "원",
+                activity?.getId() ?: -1L
+            )
+            findNavController().navigate(action)
+        } catch (e: Exception) {
+            Log.e("BillInputIntroFragment", "error : ${e.message}")
+            val activity = activity as? BillInputActivity
+            activity?.closeAllFragmentsAndFinishActivity()
+        }
     }
 
     override fun onScheduleDeleteListener(position: Int) {

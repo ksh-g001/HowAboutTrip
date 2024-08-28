@@ -28,7 +28,7 @@ interface RecordService {
     @POST("receipts")
     fun saveReceipt(
         @Part("request") detail : RequestBody,
-        @Part receiptImg : MultipartBody.Part
+        @Part receiptImg : MultipartBody.Part?
     ) : Call<String>
 
     @GET("receipts/schedules/list")

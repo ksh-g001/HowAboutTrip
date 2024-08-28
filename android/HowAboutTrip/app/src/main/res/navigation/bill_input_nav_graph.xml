@@ -12,7 +12,17 @@
         tools:layout="@layout/fragment_bill_input_intro" >
         <action
             android:id="@+id/action_billInputIntroFragment_to_billNonOcrFragment"
-            app:destination="@id/billNonOcrFragment" />
+            app:destination="@id/billNonOcrFragment">
+            <argument
+                android:name="date"
+                app:argType="string"/>
+            <argument
+                android:name="currency"
+                app:argType="string"/>
+            <argument
+                android:name="id"
+                app:argType="long"/>
+        </action>
         <action
             android:id="@+id/action_billInputIntroFragment_to_ocrFragment"
             app:destination="@id/ocrFragment">
@@ -40,7 +50,17 @@
         android:id="@+id/billNonOcrFragment"
         android:name="com.project.how.view.fragment.record.BillNonOcrFragment"
         android:label="fragment_bill_non_ocr"
-        tools:layout="@layout/fragment_bill_non_ocr" />
+        tools:layout="@layout/fragment_bill_non_ocr">
+        <argument
+            android:name="date"
+            app:argType="string"/>
+        <argument
+            android:name="currency"
+            app:argType="string"/>
+        <argument
+            android:name="id"
+            app:argType="long"/>
+    </fragment>
     <fragment
         android:id="@+id/ocrFragment"
         android:name="com.project.how.view.fragment.record.OcrFragment"

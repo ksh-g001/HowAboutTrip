@@ -82,6 +82,35 @@ class RecordViewModel : ViewModel() {
         recordRepository.getUri(uri)
     }
 
+    fun saveReceiptNonImage(context: Context, detail: ReceiptDetail) = viewModelScope.launch(Dispatchers.IO) {
+        val requestBody =
+            Gson().toJson(detail).toRequestBody("application/json".toMediaTypeOrNull())
+
+        RecordRetrofit.getApiService()?.let { apiService->
+            apiService.saveReceipt(requestBody, null)
+                .enqueue(object : Callback<String>{
+                    override fun onResponse(p0: Call<String>, p1: Response<String>) {
+                        try {
+                            if (p1.code() == 201){
+                                recordRepository.getSaveCheck(true)
+                            }else{
+                                recordRepository.getSaveCheck(false)
+                            }
+                        }catch (e: Exception){
+                            Log.e("saveReceipt", "code : ${p1.code()}\nerror : ${e.message}")
+                            recordRepository.getSaveCheck(false)
+                        }
+                    }
+                    override fun onFailure(p0: Call<String>, p1: Throwable) {
+                        Log.e("saveReceipt", "onFailure\nerror : ${p1.message}")
+                        recordRepository.getSaveCheck(false)
+                    }
+
+                })
+
+        }
+    }
+
     fun saveReceipt(context: Context, detail: ReceiptDetail) = viewModelScope.launch (Dispatchers.IO) {
             if (uriLiveData.value == null){
                 return@launch

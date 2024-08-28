@@ -3,6 +3,7 @@ package com.project.how.adapter.recyclerview.record
 import android.text.Editable
 import android.text.InputType
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +42,9 @@ class BillDetailsAdapter(
             if (data.itemPrice == 0.0){
                 binding.totalPrice.text = 0.toString()
             }else{
-                val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(data.count*data.itemPrice)
+                val totalPrice = data.itemPrice * data.count.toDouble()
+                val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(totalPrice)
+                Log.d("BillDetailsAdapter", "bind : ${getTotalPrice()}\ttotal price : $totalPrice		count : ${details[position].count}	item price : ${details[position].itemPrice}	title : ${details[position].title}")
                 binding.totalPrice.text = formatted
             }
             binding.num.text = data.count.toString()
@@ -54,10 +57,10 @@ class BillDetailsAdapter(
 
 
             binding.minus.setOnClickListener {
-                minus(data, position)
+                minus(position)
             }
             binding.plus.setOnClickListener {
-                plus(data, position)
+                plus(position)
             }
             binding.delete.setOnClickListener {
                 remove(position)
@@ -70,11 +73,13 @@ class BillDetailsAdapter(
                 override fun afterTextChanged(s: Editable?) {
                     if (!s.isNullOrBlank()) {
                         val cursorPosition = binding.unitPrice.selectionStart
-                        val num = s.toString().replace(",", "")
-                        data.itemPrice = num.toDoubleOrNull() ?: 0.0
+                        val num = s.toString().replace(Regex("[^\\d.]"), "")
+                        details[position].itemPrice = num.toDoubleOrNull() ?: 0.0
                         binding.unitPrice.setSelection(cursorPosition)
-                        val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(data.count*data.itemPrice)
+                        val totalPrice = details[position].itemPrice * details[position].count.toDouble()
+                        val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(totalPrice)
                         binding.totalPrice.text = formatted
+                        Log.d("BillDetailsAdapter", "itemPriceEditText : ${getTotalPrice()}\ttotal price : $totalPrice\t\tcount : ${details[position].count}\titem price : ${details[position].itemPrice}\ttitle : ${details[position].title}")
                         onPriceListener.onTotalPriceListener(getTotalPrice())
                     }
                 }
@@ -90,7 +95,7 @@ class BillDetailsAdapter(
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
-                    data.title = binding.title.text.toString()
+                    details[position].title = binding.title.text.toString()
                 }
 
             }
@@ -111,20 +116,30 @@ class BillDetailsAdapter(
 
     override fun getItemCount(): Int = details.size
 
+    override fun getItemViewType(position: Int): Int = position
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = details[position]
         holder.bind(data, position)
     }
 
-    private fun plus(data : ReceiptDetailListItem, position: Int){
-        data.count++
+    private fun plus(position: Int) {
+        val data = details[position]
+        val updatedData = data.copy(count = data.count + 1)
+        details[position] = updatedData
         notifyItemChanged(position)
+        Log.d("BillDetailsAdapter", "plus : ${getTotalPrice()}\tcount : ${details[position].count}\titem price : ${details[position].itemPrice}\ttitle : ${details[position].title}")
+        onPriceListener.onTotalPriceListener(getTotalPrice())
     }
 
-    private fun minus(data : ReceiptDetailListItem, position: Int){
+    private fun minus(position: Int) {
+        val data = details[position]
         if (data.count > 1) {
-            data.count--
+            val updatedData = data.copy(count = data.count - 1)
+            details[position] = updatedData
             notifyItemChanged(position)
+            Log.d("BillDetailsAdapter", "minus : ${getTotalPrice()}\tcount : ${details[position].count}\titem price : ${details[position].itemPrice}\ttitle : ${details[position].title}")
+            onPriceListener.onTotalPriceListener(getTotalPrice())
         }
     }
 
@@ -177,7 +192,11 @@ class BillDetailsAdapter(
         binding.delete.visibility = View.VISIBLE
     }
 
-    fun getTotalPrice() : Double = details.sumOf { it.itemPrice * it.count }
+    fun getTotalPrice() : Double {
+        val totalPrice = details.sumOf { it.itemPrice * it.count.toDouble() }
+        Log.d("BillDetailsAdapter", "getTotalPrice : ${totalPrice}")
+        return totalPrice
+    }
 
     fun getAllData() : List<ReceiptDetailListItem> = details.toList()
 
