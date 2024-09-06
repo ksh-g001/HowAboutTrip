@@ -1,4 +1,4 @@
-package com.project.how.adapter.recyclerview.record
+package com.project.how.adapter.recyclerview.record.receipt
 
 import android.content.Context
 import android.view.LayoutInflater

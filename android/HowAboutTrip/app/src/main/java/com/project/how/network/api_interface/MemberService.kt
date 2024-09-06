@@ -1,7 +1,7 @@
 package com.project.how.network.api_interface
 
 import com.project.how.data_class.dto.EmptyResponse
-import com.project.how.data_class.dto.member.LoginRequest
+import com.project.how.data_class.dto.member.UidRequest
 import com.project.how.data_class.dto.member.SignUpRequest
 import com.project.how.data_class.dto.member.AuthRecreateRequest
 import com.project.how.data_class.dto.member.GetInfoResponse
@@ -17,7 +17,7 @@ interface MemberService {
     @Headers("No-Authorization: true")
     @POST("members/login")
     fun login(
-        @Body login: LoginRequest
+        @Body login: UidRequest
     ) : Call<String>
 
     @PUT("members/signUp")

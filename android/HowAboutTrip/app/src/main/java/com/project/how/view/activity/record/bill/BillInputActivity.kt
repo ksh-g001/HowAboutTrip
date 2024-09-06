@@ -1,4 +1,4 @@
-package com.project.how.view.activity.record
+package com.project.how.view.activity.record.bill
 
 import android.content.Intent
 import android.os.Bundle

@@ -16,7 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.project.how.BuildConfig
 import com.project.how.R
-import com.project.how.data_class.dto.member.LoginRequest
+import com.project.how.data_class.dto.member.UidRequest
 import com.project.how.databinding.ActivityLoginBinding
 import com.project.how.view_model.MemberViewModel
 import kotlinx.coroutines.launch
@@ -70,8 +70,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun sendUid(uid : String){
         lifecycleScope.launch {
-            val loginRequest = LoginRequest(uid)
-            val code = viewModel.getTokens(this@LoginActivity, loginRequest)
+            val uidRequest = UidRequest(uid)
+            val code = viewModel.getTokens(this@LoginActivity, uidRequest)
             when (code) {
                 EXISTING_MEMBER -> {
                     Log.d("sendUid", "Existing member")

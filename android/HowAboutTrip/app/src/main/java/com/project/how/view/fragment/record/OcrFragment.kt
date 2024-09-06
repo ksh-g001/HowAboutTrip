@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -22,17 +21,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
-import com.project.how.BuildConfig
 import com.project.how.R
-import com.project.how.adapter.recyclerview.record.BillDetailsAdapter
+import com.project.how.adapter.recyclerview.record.receipt.BillDetailsAdapter
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetailListItem
 import com.project.how.databinding.FragmentOcrBinding
 import com.project.how.interface_af.OnYesOrNoListener
-import com.project.how.view.activity.record.BillActivity
-import com.project.how.view.activity.record.BillInputActivity
+import com.project.how.view.activity.record.bill.BillInputActivity
 import com.project.how.view.dialog.ConfirmDialog
-import com.project.how.view.dialog.WarningDialog
 import com.project.how.view.dialog.YesOrNoDialog
 import com.project.how.view_model.RecordViewModel
 import kotlinx.coroutines.launch

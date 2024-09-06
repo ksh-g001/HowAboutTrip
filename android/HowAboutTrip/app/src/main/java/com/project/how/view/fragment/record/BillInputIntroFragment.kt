@@ -13,7 +13,7 @@ import com.project.how.databinding.FragmentBillInputIntroBinding
 import com.project.how.interface_af.OnYesOrNoListener
 import com.project.how.view.dialog.YesOrNoDialog
 import androidx.navigation.fragment.findNavController
-import com.project.how.view.activity.record.BillInputActivity
+import com.project.how.view.activity.record.bill.BillInputActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

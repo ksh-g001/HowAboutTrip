@@ -1,4 +1,4 @@
-package com.project.how.view.activity.record
+package com.project.how.view.activity.record.bill
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,9 +6,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.project.how.BuildConfig
 import com.project.how.R
-import com.project.how.adapter.recyclerview.record.BillListAdapter
+import com.project.how.adapter.recyclerview.record.receipt.BillListAdapter
 import com.project.how.data_class.dto.recode.receipt.ReceiptListItem
 import com.project.how.databinding.ActivityBillListBinding
 import com.project.how.view_model.RecordViewModel

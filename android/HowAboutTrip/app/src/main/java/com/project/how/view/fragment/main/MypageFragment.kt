@@ -19,7 +19,7 @@ import com.project.how.view.activity.calendar.CalendarListActivity
 import com.project.how.view.activity.mypage.ExchangeRateActivity
 import com.project.how.view.activity.mypage.LikeActivity
 import com.project.how.view.activity.mypage.WeatherActivity
-import com.project.how.view.activity.record.BillListActivity
+import com.project.how.view.activity.record.bill.BillListActivity
 import com.project.how.view_model.MemberViewModel
 
 class MypageFragment : Fragment() {

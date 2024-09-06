@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bill"
-            type="com.project.how.view.activity.record.BillListActivity" />
+            type="com.project.how.view.activity.record.bill.BillListActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,4 +1,4 @@
-package com.project.how.adapter.recyclerview.record
+package com.project.how.adapter.recyclerview.record.receipt
 
 import android.text.Editable
 import android.text.InputType
@@ -13,7 +13,6 @@ import com.project.how.databinding.BillDetailsItemBinding
 import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.roundToLong
-import kotlin.math.truncate
 
 class BillDetailsAdapter(
     private var details : MutableList<ReceiptDetailListItem>,

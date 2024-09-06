@@ -14,8 +14,8 @@ import com.project.how.R
 import com.project.how.adapter.recyclerview.viewpager.RecentAddedRecordsAdapter
 import com.project.how.data_class.recyclerview.record.RecentAddedRecord
 import com.project.how.databinding.FragmentRecordBinding
-import com.project.how.view.activity.record.BillListActivity
-import com.project.how.view.activity.record.LocationMapActivity
+import com.project.how.view.activity.record.bill.BillListActivity
+import com.project.how.view.activity.record.picture.LocationMapActivity
 import com.project.how.view_model.MemberViewModel
 import com.project.how.view_model.RecordViewModel
 import kotlinx.coroutines.launch

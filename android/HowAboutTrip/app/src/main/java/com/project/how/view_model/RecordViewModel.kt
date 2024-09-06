@@ -3,6 +3,7 @@ package com.project.how.view_model
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -13,13 +14,18 @@ import com.google.gson.Gson
 import com.project.how.BuildConfig
 import com.project.how.data_class.dto.EmptyResponse
 import com.project.how.data_class.dto.ErrorResponse
+import com.project.how.data_class.dto.recode.image.AddedImage
+import com.project.how.data_class.dto.recode.image.ImageElement
+import com.project.how.data_class.dto.recode.image.ImagesResponse
+import com.project.how.data_class.dto.recode.image.LocationSchedules
+import com.project.how.data_class.dto.recode.image.SaveImageRequest
 import com.project.how.data_class.dto.recode.ocr.OcrResponse
 import com.project.how.data_class.dto.recode.ocr.ProductLineItem
 import com.project.how.data_class.dto.recode.receipt.ChangeOrderReceiptRequest
+import com.project.how.data_class.dto.recode.receipt.GetReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetailListItem
-import com.project.how.data_class.dto.recode.receipt.GetReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.ReceiptSimpleList
 import com.project.how.data_class.dto.recode.receipt.StoreType
 import com.project.how.model.RecordRepository
@@ -42,9 +48,15 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
 
 class RecordViewModel : ViewModel() {
@@ -54,6 +66,9 @@ class RecordViewModel : ViewModel() {
     private val _ocrResponseLiveData = recordRepository.ocrResponseLiveData
     private val _receiptSimpleListLiveData = recordRepository.receiptSimpleListLiveData
     private val _saveCheckLiveData = recordRepository.saveCheckLiveData
+    private val _locationSchedulesLiveData = recordRepository.locationSchedulesLiveData
+    private val _imagesLiveData = recordRepository.imagesLiveData
+    private val _addedImageLiveDate = recordRepository.addedImageLiveData
     val currentReceiptListLiveData : LiveData<GetReceiptListResponse>
         get() = _currentReceiptListLiveData
     val uriLiveData : LiveData<Uri>
@@ -64,6 +79,12 @@ class RecordViewModel : ViewModel() {
         get() = _receiptSimpleListLiveData
     val saveCheckLiveData : LiveData<Boolean>
         get() = _saveCheckLiveData
+    val locationSchedulesLiveData : LiveData<LocationSchedules?>
+        get() = _locationSchedulesLiveData
+    val imagesLiveData : LiveData<ImagesResponse?>
+        get() = _imagesLiveData
+    val addedImageLiveDate : LiveData<ImageElement>
+        get() = _addedImageLiveDate
 
     fun uploadReceipt(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -82,7 +103,7 @@ class RecordViewModel : ViewModel() {
         recordRepository.getUri(uri)
     }
 
-    fun saveReceiptNonImage(context: Context, detail: ReceiptDetail) = viewModelScope.launch(Dispatchers.IO) {
+    fun saveReceiptNonImage(detail: ReceiptDetail) = viewModelScope.launch(Dispatchers.IO) {
         val requestBody =
             Gson().toJson(detail).toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -414,6 +435,112 @@ class RecordViewModel : ViewModel() {
         awaitClose()
     }.flowOn(Dispatchers.IO)
 
+    fun readImageCountries() = viewModelScope.launch(Dispatchers.IO){
+        RecordRetrofit.getApiService()?.let { apiService->
+            apiService.readCountries()
+                .enqueue(object : Callback<LocationSchedules>{
+                    override fun onResponse(
+                        p0: Call<LocationSchedules>,
+                        p1: Response<LocationSchedules>
+                    ) {
+                        try {
+                            if (p1.code() == SUCCESS){
+                                val result = p1.body()
+                                recordRepository.getLocationSchedules(result)
+                            }else{
+                                recordRepository.getLocationSchedules(null)
+                                Log.e("readImageCountries", "code : ${p1.code()}")
+                            }
+                        }catch (e : Exception){
+                            recordRepository.getLocationSchedules(null)
+                            Log.e("readImageCountries", "code : ${p1.code()} error : ${e.message}")
+                        }
+                    }
+
+                    override fun onFailure(p0: Call<LocationSchedules>, p1: Throwable) {
+                        recordRepository.getLocationSchedules(null)
+                        Log.e("readImageCountries", "onFailure\nerror : ${p1.message}")
+                    }
+
+                })
+        }
+    }
+
+    fun readImages(scheduleId: Long) = viewModelScope.launch(Dispatchers.IO){
+        RecordRetrofit.getApiService()?.let { apiService->
+            apiService.readImages(scheduleId)
+                .enqueue(object : Callback<ImagesResponse> {
+                    override fun onResponse(
+                        p0: Call<ImagesResponse>,
+                        p1: Response<ImagesResponse>
+                    ) {
+                        try {
+                            if (p1.code() == SUCCESS){
+                                val result = p1.body()
+                                recordRepository.getImages(result)
+                            }else{
+                                Log.d("readImages", "code : ${p1.code()}")
+                                recordRepository.getImages(null)
+                            }
+                        }catch (e : Exception){
+                            Log.e("readImages", "code : ${p1.code()} error : ${e.message}")
+                            recordRepository.getImages(null)
+                        }
+                    }
+
+                    override fun onFailure(p0: Call<ImagesResponse>, p1: Throwable) {
+                        Log.e("readImages", "onFailure\nerror : ${p1.message}")
+                        recordRepository.getImages(null)
+                    }
+
+                })
+        }
+    }
+
+    fun saveImage(context: Context, uri: Uri, scheduleId: Long) = viewModelScope.launch(Dispatchers.IO){
+        val image = getFileFromURI(context, uri)
+        val date = getImageDate(context, uri)
+
+        Log.d("getImageDate", "date : $date")
+        if (image != null && date != null){
+            saveImage(image, date, scheduleId)
+            return@launch
+        }
+
+    }
+
+    private fun saveImage(file : File, date : String, id: Long) = viewModelScope.launch(Dispatchers.IO){
+        val request = SaveImageRequest(id, date)
+        val requestBody =
+            Gson().toJson(request).toRequestBody("application/json".toMediaTypeOrNull())
+
+        val mediaType = getImageType(file)
+        val requestFile = file.asRequestBody(mediaType.toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+        RecordRetrofit.getApiService()?.let { apiService->
+            apiService.saveImage(requestBody, body)
+                .enqueue(object : Callback<AddedImage>{
+                    override fun onResponse(p0: Call<AddedImage>, p1: Response<AddedImage>) {
+                        try {
+                            if (p1.code() == CREATED){
+                                val result = p1.body()
+                                val addedImage = ImageElement(result!!.id, result.url, result.date)
+                                recordRepository.addImage(addedImage)
+                                return
+                            }
+                        }catch (e : Exception){
+                            Log.e("saveImage", "code : ${p1.code()} error : ${e.message}")
+                        }
+                    }
+
+                    override fun onFailure(p0: Call<AddedImage>, p1: Throwable) {
+                        Log.e("saveImage", "onFailure\nerror : ${p1.message}")
+                    }
+
+                })
+        }
+    }
+
     private fun getImageType(file: File) : String{
         val mediaType = when {
             file.extension.equals("jpg", true) || file.extension.equals("jpeg", true) -> "image/jpeg"
@@ -424,10 +551,43 @@ class RecordViewModel : ViewModel() {
         return mediaType
     }
 
+    private suspend fun getImageDate(context: Context, uri: Uri): String? {
+        try {
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val exif = ExifInterface(inputStream!!)
+            val dateTaken = exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
+
+            Log.d("getImageDate", "EXIF date : $dateTaken")
+
+            if (!dateTaken.isNullOrEmpty()) {
+                return dateTaken
+            }else{
+                Log.d("getImageDate", "EXIF date is null")
+
+                getFileFromURI(context, uri)?.let { file ->
+                    Log.d("getImageDate", "\n" +
+                            "\n---------------------file--------------------------imageType : ${getImageType(file)}")
+                    val attrs: BasicFileAttributes = Files.readAttributes(
+                        file.toPath(),
+                        BasicFileAttributes::class.java
+                    )
+                    val creationTime = attrs.creationTime()
+                    val date = creationTime.toString().replace("[TZ]".toRegex(), " ")
+                    Log.d("getImageDate", "createTime : ${creationTime.toString().replace("[TZ]".toRegex(), " ")}")
+                    return date
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
     suspend fun getFileFromURI(context: Context, uri: Uri): File? {
         return withContext(Dispatchers.IO) {
             recordRepository.getUri(uri)
-            Log.d("uploadReceipt", "getRealPathFromURI Start\nuri : $uri\nuri.path : ${uri.path}")
+            Log.d("getFileFromURI", "getRealPathFromURI Start\nuri : $uri\nuri.path : ${uri.path}")
             var file: File? = null
 
             if (uri.scheme == "content") {
@@ -446,7 +606,7 @@ class RecordViewModel : ViewModel() {
                 file = File(uri.path)
             }
 
-            Log.d("uploadReceipt", "getRealPathFromURI end\n$file")
+            Log.d("getFileFromURI", "getRealPathFromURI end\n$file")
             file
         }
     }
@@ -541,6 +701,7 @@ class RecordViewModel : ViewModel() {
 
     companion object{
         const val SUCCESS = 200
+        const val CREATED = 201
         const val NOT_FOUND = 404
         const val BAD_REQUEST = 400
         const val NOT_ALL = -400

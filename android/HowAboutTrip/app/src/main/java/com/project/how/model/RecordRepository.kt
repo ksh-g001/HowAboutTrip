@@ -3,6 +3,9 @@ package com.project.how.model
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.project.how.data_class.dto.recode.image.ImageElement
+import com.project.how.data_class.dto.recode.image.ImagesResponse
+import com.project.how.data_class.dto.recode.image.LocationSchedules
 import com.project.how.data_class.dto.recode.ocr.OcrResponse
 import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.ReceiptListItem
@@ -14,6 +17,9 @@ class RecordRepository {
     private val _ocrResponseLiveData : MutableLiveData<OcrResponse?> = MutableLiveData()
     private val _receiptSimpleListLiveData : MutableLiveData<ReceiptSimpleList> = MutableLiveData()
     private val _saveCheckLiveData : MutableLiveData<Boolean> = MutableLiveData()
+    private val _locationSchedulesLiveData : MutableLiveData<LocationSchedules?> = MutableLiveData()
+    private val _imagesLiveData : MutableLiveData<ImagesResponse?> = MutableLiveData()
+    private val _addedImageLiveData : MutableLiveData<ImageElement> = MutableLiveData()
     val currentReceiptListLiveData : LiveData<GetReceiptListResponse>
         get() = _currentReceiptListLiveData
     val uriLiveData : LiveData<Uri>
@@ -24,6 +30,12 @@ class RecordRepository {
         get() = _receiptSimpleListLiveData
     val saveCheckLiveData : LiveData<Boolean>
         get() = _saveCheckLiveData
+    val locationSchedulesLiveData : LiveData<LocationSchedules?>
+        get() = _locationSchedulesLiveData
+    val imagesLiveData : LiveData<ImagesResponse?>
+        get() = _imagesLiveData
+    val addedImageLiveData : LiveData<ImageElement>
+        get() = _addedImageLiveData
 
     fun getCurrentReceiptList(data : GetReceiptListResponse){
         _currentReceiptListLiveData.postValue(data)
@@ -43,5 +55,17 @@ class RecordRepository {
 
     fun getSaveCheck(data : Boolean){
         _saveCheckLiveData.postValue(data)
+    }
+
+    fun getLocationSchedules(data : LocationSchedules?) {
+        _locationSchedulesLiveData.postValue(data)
+    }
+
+    fun getImages(data : ImagesResponse?){
+        _imagesLiveData.postValue(data)
+    }
+
+    fun addImage(newData : ImageElement){
+        _addedImageLiveData.postValue(newData)
     }
 }

@@ -12,13 +12,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.project.how.R
-import com.project.how.adapter.recyclerview.record.BillDetailsAdapter
+import com.project.how.adapter.recyclerview.record.receipt.BillDetailsAdapter
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetail
 import com.project.how.data_class.dto.recode.receipt.ReceiptDetailListItem
 import com.project.how.data_class.dto.recode.receipt.StoreType
 import com.project.how.databinding.FragmentBillNonOcrBinding
-import com.project.how.view.activity.record.BillInputActivity
-import com.project.how.view.dialog.ConfirmDialog
+import com.project.how.view.activity.record.bill.BillInputActivity
 import com.project.how.view_model.RecordViewModel
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -99,7 +98,7 @@ class BillNonOcrFragment : Fragment(), BillDetailsAdapter.OnPriceListener {
                     currentDate,
                     totalPrice,
                     adapter.getAllData())
-                recordViewModel.saveReceiptNonImage(requireContext(), data)
+                recordViewModel.saveReceiptNonImage(data)
             }catch (e : Exception){
                 Log.e("BillNonOcrFragment", "save error: ${e.message}")
                 Toast.makeText(requireContext(), getString(R.string.server_network_error), Toast.LENGTH_SHORT).show()

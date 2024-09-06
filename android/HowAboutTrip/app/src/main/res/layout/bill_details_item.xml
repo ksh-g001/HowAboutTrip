@@ -6,7 +6,7 @@
     <data>
         <variable
             name="adapter"
-            type="com.project.how.adapter.recyclerview.record.BillDetailsAdapter" />
+            type="com.project.how.adapter.recyclerview.record.receipt.BillDetailsAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,4 +1,4 @@
-package com.project.how.view.activity.record
+package com.project.how.view.activity.record.bill
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.tabs.TabLayout
 import com.project.how.R
 import com.project.how.adapter.item_touch_helper.RecyclerViewItemTouchHelperCallback
-import com.project.how.adapter.recyclerview.record.BillDaysAdapter
+import com.project.how.adapter.recyclerview.record.receipt.BillDaysAdapter
 import com.project.how.data_class.dto.recode.receipt.ChangeOrderReceiptRequest
 import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.ReceiptList

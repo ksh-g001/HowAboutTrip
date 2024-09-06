@@ -3,7 +3,6 @@ package com.project.how.view.dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,22 +12,24 @@ import androidx.core.view.isEmpty
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.project.how.R
-import com.project.how.data_class.recyclerview.schedule.DaysSchedule
-import com.project.how.databinding.DialogDatepickerBinding
-import com.project.how.interface_af.OnDateTimeListener
+import com.project.how.data_class.dto.schedule.GetScheduleListResponse
+import com.project.how.databinding.DialogScheduleChoiceBinding
 
-class DatePickerDialog(private val data : DaysSchedule, private val dates : List<String>, private val position : Int, private val selectedDays : Int, private val onDateTimeListener: OnDateTimeListener) : DialogFragment() {
-    private var _binding : DialogDatepickerBinding? = null
-    private val binding : DialogDatepickerBinding
+class ScheduleChoiceDialog(
+    private val schedules : GetScheduleListResponse,
+    private val onDialogListener: OnDialogListener
+) : DialogFragment() {
+    private var _binding : DialogScheduleChoiceBinding? = null
+    private val binding : DialogScheduleChoiceBinding
         get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.dialog_datepicker, container,false)
-        binding.date = this
+    ): View? {
+        _binding = DataBindingUtil.inflate(inflater, R.layout.dialog_schedule_choice, container,false)
+        binding.dialog = this
         binding.lifecycleOwner = viewLifecycleOwner
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.window?.requestFeature(Window.FEATURE_NO_TITLE)
@@ -43,41 +44,37 @@ class DatePickerDialog(private val data : DaysSchedule, private val dates : List
         setRadioButton()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    fun cancel(){
-        dismiss()
-    }
-
-    fun save(){
-        val date = getCheckedRadioButtonDate()
-        Log.d("getDateList", "name : ${data.todo}\nselecetedDate : ${dates[selectedDays]}\nchangedDate : $date\nposition : $position")
-        onDateTimeListener.onSaveDate(data, dates[selectedDays], date, position)
-        dismiss()
-    }
-
     private fun setRadioButton(){
-        for(d in dates){
+        for(d in schedules){
             val rdbtn = RadioButton(requireContext()).apply {
-                text = d
+                text = "${d.scheduleName}\n(${getString(R.string.date_text, d.startDate, d.endDate)})"
                 id = View.generateViewId()
-                if (d == dates[selectedDays])
+                if (d.id == schedules[0].id)
                     isChecked = true
             }
             binding.radio.addView(rdbtn)
         }
     }
 
-    private fun getCheckedRadioButtonDate() : String{
+    private fun getCheckedRadioButtonId() : Long{
         val checked = binding.radio.checkedRadioButtonId
         if(checked == -1){
-            return dates[selectedDays]
+            return schedules[0].id
         }
 
         val radioBtn = binding.radio.findViewById<RadioButton>(checked)
-        return radioBtn.text.toString()
+        return schedules.find { it.scheduleName == radioBtn.text.toString().split("\n")[0] }!!.id
+    }
+
+    fun cancel(){
+        dismiss()
+    }
+
+    fun select(){
+        onDialogListener.onSelectListener(getCheckedRadioButtonId())
+    }
+
+    interface OnDialogListener{
+        fun onSelectListener(id : Long)
     }
 }

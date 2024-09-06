@@ -2,6 +2,10 @@ package com.project.how.network.api_interface
 
 import com.project.how.data_class.dto.EmptyResponse
 import com.project.how.data_class.dto.ErrorResponse
+import com.project.how.data_class.dto.member.UidRequest
+import com.project.how.data_class.dto.recode.image.AddedImage
+import com.project.how.data_class.dto.recode.image.ImagesResponse
+import com.project.how.data_class.dto.recode.image.LocationSchedules
 import com.project.how.data_class.dto.recode.receipt.ChangeOrderReceiptRequest
 import com.project.how.data_class.dto.recode.receipt.GetReceiptListResponse
 import com.project.how.data_class.dto.recode.receipt.GetReceiptDetail
@@ -57,4 +61,19 @@ interface RecordService {
         @Path("scheduleId", encoded = true) scheduleId : Long,
         @Body changeOrderReceiptRequest: List<ChangeOrderReceiptRequest>
     ) : Call<ErrorResponse?>
+
+    @GET("scheduleImages/countries")
+    fun readCountries() : Call<LocationSchedules>
+
+    @GET("scheduleImages/{scheduleId}")
+    fun readImages(
+        @Path("scheduleId", encoded = true) scheduleId : Long
+    ) : Call<ImagesResponse>
+
+    @Multipart
+    @POST("scheduleImages")
+    fun saveImage(
+        @Part("saveScheduleImageRequest") imageInfo : RequestBody,
+        @Part image : MultipartBody.Part?
+    ) : Call<AddedImage>
 }

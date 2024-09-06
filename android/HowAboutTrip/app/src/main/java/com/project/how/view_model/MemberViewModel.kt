@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.project.how.R
 import com.project.how.data_class.MemberInfo
-import com.project.how.data_class.dto.member.LoginRequest
+import com.project.how.data_class.dto.member.UidRequest
 import com.project.how.data_class.Tokens
 import com.project.how.data_class.dto.member.AuthRecreateRequest
 import com.project.how.data_class.dto.EmptyResponse
@@ -16,7 +16,6 @@ import com.project.how.data_class.dto.member.GetInfoResponse
 import com.project.how.data_class.dto.member.SignUpRequest
 import com.project.how.model.MemberRepository
 import com.project.how.network.client.MemberRetrofit
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -114,7 +113,7 @@ object MemberViewModel : ViewModel() {
                             }else{
                                 memberRepository.userLiveData.value?.let {
                                     val lq =
-                                        LoginRequest(it.uid)
+                                        UidRequest(it.uid)
                                     val code = getTokens(context, lq)
                                     if (code != EXISTING_MEMBER) {
                                         trySend(ON_FAILURE)
@@ -137,7 +136,7 @@ object MemberViewModel : ViewModel() {
         awaitClose()
     }
 
-    suspend fun getTokens(context : Context, lr: LoginRequest) : Int = suspendCoroutine{ continuation ->
+    suspend fun getTokens(context : Context, lr: UidRequest) : Int = suspendCoroutine{ continuation ->
         try {
             Log.d("getTokens", "loginRequest : ${lr.uid}")
             MemberRetrofit.getApiService()!!
