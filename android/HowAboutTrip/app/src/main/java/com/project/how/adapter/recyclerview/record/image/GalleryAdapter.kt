@@ -17,7 +17,6 @@ class GalleryAdapter(
     private var keys = datas.keys.toMutableList()
     private var edit = false
     init {
-        keys.sort()
         Log.d("GalleryAdapter", "keys : $keys")
     }
 
@@ -54,6 +53,7 @@ class GalleryAdapter(
     fun update(images : ImagesResponse){
         datas = images.scheduleImages.groupBy { it.date.split("T")[0] }.toMutableMap()
         keys = datas.keys.toMutableList()
+        keys.sort()
         Log.d("GalleryAdapter", "keys : $keys")
         notifyDataSetChanged()
     }
@@ -84,6 +84,26 @@ class GalleryAdapter(
         keys.add(date)
         keys.sort()
         notifyItemRangeChanged(keys.indexOf(date), keys.size)
+    }
+
+    fun delete(imageId: Long){
+        val key = datas.keys.find { key -> datas[key]!!.any { it.id == imageId } }
+        if (key == null)
+            return
+
+        val images = datas[key]?.toMutableList()
+        val deletedItem = images?.find { it.id == imageId }
+        images?.remove(deletedItem)
+        if (images?.isEmpty() == true){
+            notifyItemRemoved(keys.indexOf(key))
+            datas.remove(key)
+            keys.remove(key)
+            return
+        }
+
+        datas[key] = images!!
+        notifyItemChanged(keys.indexOf(key))
+
     }
 
     private fun ableEdit(adapter: ImageAdapter){

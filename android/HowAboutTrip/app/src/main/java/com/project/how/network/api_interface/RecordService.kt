@@ -76,4 +76,10 @@ interface RecordService {
         @Part("saveScheduleImageRequest") imageInfo : RequestBody,
         @Part image : MultipartBody.Part?
     ) : Call<AddedImage>
+
+    @DELETE("scheduleImages/{imageId}")
+    fun deleteImage(
+        @Path("imageId", encoded = true) imageId : Long
+    ) : Call<EmptyResponse>
+
 }

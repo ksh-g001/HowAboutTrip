@@ -541,6 +541,34 @@ class RecordViewModel : ViewModel() {
         }
     }
 
+    fun deleteImage(imageId : Long) = callbackFlow<Boolean> {
+        RecordRetrofit.getApiService()?.let { apiService->
+            apiService.deleteImage(imageId)
+                .enqueue(object : Callback<EmptyResponse>{
+                    override fun onResponse(p0: Call<EmptyResponse>, p1: Response<EmptyResponse>) {
+                        try {
+                            if (p1.code() == NO_CONTENT){
+                                trySend(true)
+                            }else{
+                                trySend(false)
+                            }
+                        }catch (e : Exception){
+                            Log.e("deleteImage", "code : ${p1.code()} error : ${e.message}")
+                            trySend(false)
+                        }
+                    }
+
+                    override fun onFailure(p0: Call<EmptyResponse>, p1: Throwable) {
+                        Log.e("deleteImage", "onFailure\nerror : ${p1.message}")
+                        trySend(false)
+                    }
+
+                })
+        } ?: close()
+
+        awaitClose()
+    }.flowOn(Dispatchers.IO)
+
     private fun getImageType(file: File) : String{
         val mediaType = when {
             file.extension.equals("jpg", true) || file.extension.equals("jpeg", true) -> "image/jpeg"
@@ -558,9 +586,10 @@ class RecordViewModel : ViewModel() {
             val dateTaken = exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
 
             Log.d("getImageDate", "EXIF date : $dateTaken")
-
             if (!dateTaken.isNullOrEmpty()) {
-                return dateTaken
+                val dateTakenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.getDefault())
+                val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                return dateTakenFormat.parse(dateTaken)?.let { format.format(it) }
             }else{
                 Log.d("getImageDate", "EXIF date is null")
 
@@ -702,6 +731,7 @@ class RecordViewModel : ViewModel() {
     companion object{
         const val SUCCESS = 200
         const val CREATED = 201
+        const val NO_CONTENT = 204
         const val NOT_FOUND = 404
         const val BAD_REQUEST = 400
         const val NOT_ALL = -400

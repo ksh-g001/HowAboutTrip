@@ -1,18 +1,14 @@
 package com.project.how.view.activity.record.picture
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.project.how.R
@@ -20,7 +16,6 @@ import com.project.how.adapter.recyclerview.record.image.GalleryAdapter
 import com.project.how.adapter.recyclerview.record.image.ImageAdapter
 import com.project.how.data_class.ScheduleSimpleInfo
 import com.project.how.data_class.dto.recode.image.ImagesResponse
-import com.project.how.data_store.TokenDataStore.dataStore
 import com.project.how.databinding.ActivityGalleryBinding
 import com.project.how.interface_af.OnDialogListener
 import com.project.how.view.dialog.WarningDialog
@@ -40,6 +35,8 @@ class GalleryActivity :
     private lateinit var scheduleName : String
     private lateinit var startDate : String
     private lateinit var endDate : String
+    private var empty = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_gallery)
@@ -60,15 +57,21 @@ class GalleryActivity :
         lifecycleScope.launch {
             recordViewModel.addedImageLiveDate.observe(this@GalleryActivity){
                 adapter.add(it)
+                if (empty)
+                    binding.emptyText.visibility = View.GONE
             }
         }
 
         lifecycleScope.launch {
             recordViewModel.imagesLiveData.observe(this@GalleryActivity){
-                if (it == null){
+                if (it == null) {
                     error()
                     return@observe
+                }else if (it.scheduleImages.isEmpty()){
+                    empty()
+                    return@observe
                 }
+
                 adapter.update(it)
             }
         }
@@ -131,6 +134,11 @@ class GalleryActivity :
         adapter.editEnd()
     }
 
+    private fun empty(){
+        empty = true
+        binding.emptyText.visibility = View.VISIBLE
+    }
+
     private fun error(){
         WarningDialog(getString(R.string.location_load_error), this).show(supportFragmentManager, "WarningDialog")
     }
@@ -139,8 +147,18 @@ class GalleryActivity :
         finish()
     }
 
-    override fun onDeleteClickListener(imageId: Long, position: Int) {
+    override fun onDeleteClickListener(imageId: Long) {
+        lifecycleScope.launch {
+            recordViewModel.deleteImage(imageId).collect{
+                if (it){
+                    adapter.delete(imageId)
+                    return@collect
+                }
 
+                Toast.makeText(this@GalleryActivity, getString(R.string.server_network_error), Toast.LENGTH_SHORT).show()
+            }
+
+        }
     }
 
     override fun onItemClickListener(image: String) {

@@ -48,7 +48,7 @@ class ScheduleChoiceDialog(
         for(d in schedules){
             val rdbtn = RadioButton(requireContext()).apply {
                 text = "${d.scheduleName}\n(${getString(R.string.date_text, d.startDate, d.endDate)})"
-                id = View.generateViewId()
+                id = d.id.toInt()
                 if (d.id == schedules[0].id)
                     isChecked = true
             }
@@ -61,9 +61,7 @@ class ScheduleChoiceDialog(
         if(checked == -1){
             return schedules[0].id
         }
-
-        val radioBtn = binding.radio.findViewById<RadioButton>(checked)
-        return schedules.find { it.scheduleName == radioBtn.text.toString().split("\n")[0] }!!.id
+        return checked.toLong()
     }
 
     fun cancel(){

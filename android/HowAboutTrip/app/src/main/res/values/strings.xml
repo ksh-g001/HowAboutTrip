@@ -358,4 +358,5 @@
     <string name="finish">완료</string>
     <string name="schedulesimpleinfo">ScheduleSimpleInfo</string>
     <string name="image_load_error">이미지 정보를 불러오는데에 실패했습니다.</string>
+    <string name="empty_gallery">저장된 사진이 없습니다.\n수정 버튼을 눌러 새로운 사진을 추가해보세요</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.project.how.adapter.recyclerview.record.image
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,10 +29,11 @@ class ImageAdapter(
 
             Glide.with(binding.root)
                 .load(image.url)
+                .placeholder(ColorDrawable(Color.parseColor("#FFD9D9D9")))
                 .into(binding.imageview)
 
             binding.delete.setOnClickListener {
-                onItemClickListener.onDeleteClickListener(image.id, position)
+                onItemClickListener.onDeleteClickListener(image.id)
             }
         }
     }
@@ -61,18 +64,13 @@ class ImageAdapter(
         notifyDataSetChanged()
     }
 
-    fun delete(position: Int){
-        images.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
     fun add(newImage : ImageElement){
         images.add(newImage)
         notifyItemInserted(images.lastIndex-1)
     }
 
     interface OnItemClickListener{
-        fun onDeleteClickListener(imageId : Long, position: Int)
+        fun onDeleteClickListener(imageId: Long)
         fun onItemClickListener(image: String)
     }
 }
