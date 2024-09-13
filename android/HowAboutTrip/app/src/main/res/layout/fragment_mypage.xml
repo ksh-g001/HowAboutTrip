@@ -28,13 +28,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:fontFamily="@font/bm_hanna"
-            android:text="@{mypage.name}"
             android:maxLines="1"
+            android:text="@{mypage.name}"
             android:textColor="@color/black"
             android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="@+id/image"
             app:layout_constraintEnd_toStartOf="@+id/name_edit"
             app:layout_constraintStart_toEndOf="@+id/image"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/image" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/name_edit"
@@ -48,228 +49,298 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/calendar_search"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_calendar_search"
+        <GridLayout
+            android:id="@+id/gridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:onClick="@{()-> mypage.moveCalendarList()}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name_edit"
-            app:layout_constraintEnd_toStartOf="@id/like"/>
-
-        <ImageButton
-            android:id="@+id/like"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_heart"
-            android:layout_marginTop="40dp"
-            android:onClick="@{()->mypage.moveLike()}"
-            app:layout_constraintStart_toEndOf="@id/calendar_search"
-            app:layout_constraintTop_toBottomOf="@+id/name_edit"
-            app:layout_constraintEnd_toStartOf="@id/exchange_rate"/>
-
-        <ImageButton
-            android:id="@+id/exchange_rate"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_picture_linear"
-            android:layout_marginTop="40dp"
-            app:layout_constraintStart_toEndOf="@id/like"
-            app:layout_constraintTop_toBottomOf="@+id/name_edit"
-            app:layout_constraintEnd_toStartOf="@id/picture"/>
-
-        <ImageButton
-            android:id="@+id/picture"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="40dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_bill"
-            android:onClick="@{()->mypage.moveBillList()}"
+            android:columnCount="4"
+            android:rowCount="2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/exchange_rate"
-            app:layout_constraintTop_toBottomOf="@+id/name_edit" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/calendar_search"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:onClick="@{()-> mypage.moveCalendarList()}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/calendar_search"
-            app:layout_constraintEnd_toStartOf="@id/textView3"/>
+            app:layout_constraintTop_toBottomOf="@+id/image">
 
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/heart"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:onClick="@{()->mypage.moveLike()}"
-            app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/like"
-            app:layout_constraintEnd_toStartOf="@id/textView4"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:onClick="@{()-> mypage.moveCalendarList()}"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/picture_record"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toEndOf="@+id/textView3"
-            app:layout_constraintTop_toBottomOf="@+id/exchange_rate"
-            app:layout_constraintEnd_toStartOf="@+id/textView5"/>
+                <ImageButton
+                    android:id="@+id/calendar_search"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_calendar_search"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:text="@string/calendar_search"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/calendar_search" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/bill"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:onClick="@{()->mypage.moveBillList()}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView4"
-            app:layout_constraintTop_toBottomOf="@+id/picture" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:onClick="@{()->mypage.moveLike()}"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
+                <ImageButton
+                    android:id="@+id/like"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_heart"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/membership"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_weather"
-            android:layout_marginTop="30dp"
-            android:onClick="@{()-> mypage.moveWeather()}"
-            app:layout_constraintEnd_toStartOf="@id/weather"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:text="@string/heart"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/like" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ImageButton
-            android:id="@+id/weather"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_exchange_rate"
-            android:layout_marginTop="30dp"
-            android:onClick="@{()->mypage.moveExchangeRate()}"
-            app:layout_constraintEnd_toStartOf="@id/inquiry"
-            app:layout_constraintStart_toEndOf="@+id/membership"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:onClick="@{()-> mypage.movePicture()}"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/inquiry"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="1dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/icon_setting"
-            android:layout_marginTop="30dp"
-            app:layout_constraintEnd_toStartOf="@id/setting"
-            app:layout_constraintStart_toEndOf="@+id/weather"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                <ImageButton
+                    android:id="@+id/picture"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_picture_linear"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/setting"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="30dp"
-            app:layout_constraintStart_toEndOf="@id/exchange_rate"
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:text="@string/picture_record"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/picture" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/weather"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:onClick="@{()-> mypage.moveWeather()}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/membership"
-            app:layout_constraintEnd_toStartOf="@id/textView7"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center"
+                android:onClick="@{()->mypage.moveBillList()}"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/exchange_rate"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            android:onClick="@{()->mypage.moveExchangeRate()}"
-            app:layout_constraintStart_toEndOf="@+id/textView6"
-            app:layout_constraintTop_toBottomOf="@+id/weather"
-            app:layout_constraintEnd_toStartOf="@id/textView8"/>
+                <ImageButton
+                    android:id="@+id/bill"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_bill"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/setting"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toEndOf="@+id/textView7"
-            app:layout_constraintTop_toBottomOf="@+id/inquiry"
-            app:layout_constraintEnd_toStartOf="@+id/textView9"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@string/bill"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bill" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:onClick="@{()->mypage.moveWeather()}"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="13dp"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView8"
-            app:layout_constraintTop_toBottomOf="@+id/setting" />
+                <ImageButton
+                    android:id="@+id/weather"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_weather"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@string/weather"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/weather" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:onClick="@{()->mypage.moveExchangeRate()}"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/exchange"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_exchange_rate"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@string/weather"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/exchange" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                android:onClick="@{()-> mypage.moveSetting()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageButton
+                    android:id="@+id/setting"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_setting"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@string/setting"
+                    android:textColor="@color/black"
+                    android:textSize="13dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/setting" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </GridLayout>
+
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/adView"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:layout_marginTop="12dp"
             app:adSize="BANNER"
-            android:layout_marginTop="20dp"
             app:adUnitId="@string/GOOGLE_AD_MOB_BANNER_TEST"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+            app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

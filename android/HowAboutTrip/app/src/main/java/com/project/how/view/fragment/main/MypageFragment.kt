@@ -18,8 +18,10 @@ import com.project.how.databinding.FragmentMypageBinding
 import com.project.how.view.activity.calendar.CalendarListActivity
 import com.project.how.view.activity.mypage.ExchangeRateActivity
 import com.project.how.view.activity.mypage.LikeActivity
+import com.project.how.view.activity.mypage.SettingActivity
 import com.project.how.view.activity.mypage.WeatherActivity
 import com.project.how.view.activity.record.bill.BillListActivity
+import com.project.how.view.activity.record.picture.LocationMapActivity
 import com.project.how.view_model.MemberViewModel
 
 class MypageFragment : Fragment() {
@@ -109,5 +111,13 @@ class MypageFragment : Fragment() {
 
     fun moveBillList(){
         startActivity(Intent(requireContext(), BillListActivity::class.java))
+    }
+
+    fun moveSetting(){
+        startActivity(Intent(requireContext(), SettingActivity::class.java))
+    }
+
+    fun movePicture(){
+        startActivity(Intent(requireContext(), LocationMapActivity::class.java))
     }
 }
