@@ -74,30 +74,29 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.gms:play-services-ads:23.2.0")
+    implementation("com.google.android.gms:play-services-ads:23.3.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation ("androidx.camera:camera-core:1.3.4")
 
     implementation("com.airbnb.android:lottie:6.4.0")
 
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
-    implementation("androidx.fragment:fragment-ktx:1.8.2")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.5")
+    implementation("androidx.fragment:fragment-ktx:1.8.3")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.5")
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation(platform("com.google.firebase:firebase-bom:33.3.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth:23.0.0")
 
     implementation("com.google.android.gms:play-services-auth:21.2.0")
 
     implementation("com.google.dagger:hilt-android:2.46")
-    implementation("androidx.activity:activity-ktx:1.9.1")
-    implementation("androidx.activity:activity:1.9.1")
-    implementation("androidx.preference:preference:1.2.1")
+    implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.hilt:hilt-common:1.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.46")
 
     implementation("com.squareup.retrofit:retrofit:2.0.0-beta2")
@@ -112,8 +111,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.google.android.libraries.places:places:3.5.0")
 
-    implementation("androidx.room:room-ktx:2.7.0-alpha04")
-    kapt("androidx.room:room-compiler:2.7.0-alpha04")
+    implementation("androidx.room:room-ktx:2.7.0-alpha07")
+    kapt("androidx.room:room-compiler:2.7.0-alpha07")
+
+    implementation("androidx.work:work-runtime-ktx:2.9.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

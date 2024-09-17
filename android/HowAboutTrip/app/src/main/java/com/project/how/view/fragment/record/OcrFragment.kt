@@ -332,6 +332,10 @@ class OcrFragment : Fragment(), BillDetailsAdapter.OnPriceListener, OnYesOrNoLis
         totalPrice = ((total*100).roundToLong().toDouble()/100)
     }
 
+    override fun onDeleteListener() {
+        TODO("Not yet implemented")
+    }
+
     override fun onScheduleDeleteListener(position: Int) {
 
     }

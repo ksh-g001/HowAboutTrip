@@ -6,8 +6,8 @@
 
     <data>
         <variable
-            name="input"
-            type="com.project.how.view.activity.record.bill.BillInputActivity" />
+            name="setting"
+            type="com.project.how.view.activity.mypage.SettingActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,9 +31,9 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:background="@android:color/transparent"
-                    android:src="@drawable/arrow_left_white"
+                    android:src="@drawable/arrow_left"
                     android:scaleType="fitCenter"
-                    android:onClick="@{()-> input.onBackPressed()}"
+                    android:onClick="@{()-> setting.onBackPressed()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

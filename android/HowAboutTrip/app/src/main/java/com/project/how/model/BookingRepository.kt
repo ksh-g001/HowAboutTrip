@@ -39,6 +39,9 @@ class BookingRepository @Inject constructor(
         getLikeFlightList(mutableListOf<Long>())
     }
 
+    suspend fun deleteAll() {
+        recentAirplaneDao.deleteAll()
+    }
 
     suspend fun fetchRecentAirplanes(): List<RecentAirplane> {
         return recentAirplaneDao.getRecentAirplanes()

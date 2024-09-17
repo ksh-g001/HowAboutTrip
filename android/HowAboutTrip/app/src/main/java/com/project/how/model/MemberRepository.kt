@@ -17,7 +17,7 @@ object MemberRepository {
     private val _userLiveData = MutableLiveData<FirebaseUser>()
     private val _tokensLiveData = MutableLiveData<Tokens>()
     private val _tokensSaveLiveData = MutableLiveData<Boolean>()
-    private val _Member_infoLiveData = MutableLiveData<MemberInfo>()
+    private val _memberInfoLiveData = MutableLiveData<MemberInfo>()
     val currentUserLiveData : LiveData<FirebaseUser>
         get() = _currentUserLiveData
     val userLiveData: LiveData<FirebaseUser>
@@ -27,7 +27,7 @@ object MemberRepository {
     val tokensSaveLiveData : LiveData<Boolean>
         get() = _tokensSaveLiveData
     val memberInfoLiveData : LiveData<MemberInfo>
-        get() = _Member_infoLiveData
+        get() = _memberInfoLiveData
 
     fun getUser(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -40,20 +40,20 @@ object MemberRepository {
         }
     }
 
-    suspend fun init(context: Context) {
-        Log.d("init", "LoginRepository init start")
+    suspend fun init(context: Context, logLocation: String = "init") {
+        Log.d("init", "MemberRepository init start in $logLocation")
         TokenDataStore.getTokens(context).collect{
-            Log.d("init", "LoginRepository init getTokens() \tToken is null : ${it == null}")
+            Log.d("init", "MemberRepository init getTokens() \tToken is null : ${it == null}")
             if (it != null){
-                Log.d("init", "LoginRepository init getTokens()\naccessToken : ${it.accessToken}\nrefreshToken : ${it.refreshToken}")
+                Log.d("init", "MemberRepository init getTokens()\naccessToken : ${it.accessToken}\nrefreshToken : ${it.refreshToken}")
                 _tokensLiveData.postValue(it)
                 _tokensSaveLiveData.postValue(true)
             }else{
-                Log.d("init", "LoginRepository init getTokens() _tokensSaveLiveData.postValue(false)")
+                Log.d("init", "MemberRepository init getTokens() _tokensSaveLiveData.postValue(false)")
                 _tokensSaveLiveData.postValue(false)
             }
         }
-        Log.d("init", "LoginRepository init end")
+        Log.d("init", "MemberRepository init end in $logLocation")
     }
 
     fun checkCurrentUser() {
@@ -74,6 +74,6 @@ object MemberRepository {
     }
 
     fun getInfo(memberInfo : MemberInfo){
-        _Member_infoLiveData.postValue(memberInfo)
+        _memberInfoLiveData.postValue(memberInfo)
     }
 }

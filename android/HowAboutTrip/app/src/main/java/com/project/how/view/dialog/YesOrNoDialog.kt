@@ -70,6 +70,10 @@ class YesOrNoDialog(
                 onYesOrNoListener.onOcrListener(true)
                 dismiss()
             }
+            DELETE_CHECK -> {
+                onYesOrNoListener.onDeleteListener()
+                dismiss()
+            }
             else -> {
                 dismiss()
             }
@@ -103,6 +107,7 @@ class YesOrNoDialog(
             CAMERA_CHECK -> {result = getString(R.string.camera_function_info)}
             KEEP_CHECK -> {result = getString(R.string.keep_check_function_info)}
             OCR_CHECK -> {result = getString(R.string.ocr_function_info)}
+            DELETE_CHECK -> {result = getString(R.string.long_delay_warning)}
             else -> {result = getString(R.string.unknown_function_info)}
         }
 
@@ -114,5 +119,6 @@ class YesOrNoDialog(
         const val CAMERA_CHECK = 1
         const val KEEP_CHECK = 2
         const val OCR_CHECK = 3
+        const val DELETE_CHECK = 4
     }
 }

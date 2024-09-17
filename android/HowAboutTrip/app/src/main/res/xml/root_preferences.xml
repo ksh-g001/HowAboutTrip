@@ -1,52 +1,52 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
-        app:key="alarm"
+        app:key="@string/preference_key_alarm"
         app:title="알람 켜키/끄기"
         app:summary="디데이 알람 설정"/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <SwitchPreferenceCompat
-        app:key="location"
+        app:key="@string/preference_key_location"
         app:title="위치 서비스 활성화"
         app:summary="기기의 현재 위치 정보 "/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <Preference
-        app:key="privacy"
+        app:key="@string/preference_key_privacy"
         app:title="개인정보 처리 방침"/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <Preference
-        app:key="copy_right"
+        app:key="@string/preference_key_copy_right"
         app:title="저작권 표시"/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <Preference
-        app:key="license"
+        app:key="@string/preference_key_license"
         app:title="오픈소스 라이센스"/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <Preference
-        app:key="data_delete"
+        app:key="@string/preference_key_data_delete"
         app:title="저장 데이터 초기화"
         app:summary="최근 본 항공권과 최근 본 숙소 데이터를 지웁니다. "/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <Preference
-        app:key="logout"
+        app:key="@string/preference_key_logout"
         app:title="로그아웃"/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <Preference
-        app:key="delete_ID"
+        app:key="@string/preference_key_delete_id"
         app:title="회원탈퇴"/>
 
 

@@ -153,6 +153,10 @@ class CalendarListActivity
 
     }
 
+    override fun onDeleteListener() {
+        TODO("Not yet implemented")
+    }
+
     override fun onScheduleDeleteListener(position: Int) {
        lifecycleScope.launch {
            val data = adapter.getData(position)

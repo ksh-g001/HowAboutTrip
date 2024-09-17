@@ -3,7 +3,6 @@ package com.project.how.network.client.interceptor
 import android.content.Context
 import com.project.how.data_class.dto.member.AuthRecreateRequest
 import com.project.how.model.MemberRepository
-import com.project.how.view_model.MemberViewModel.authRecreate
 import com.project.how.view_model.MemberViewModel.authRecreate2
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
@@ -24,6 +23,12 @@ class AuthInterceptor(@ApplicationContext private val context: Context) : Interc
             val requestBuilder = originalRequest.newBuilder()
                 .removeHeader("No-Authorization")
             return chain.proceed(requestBuilder.build())
+        }
+
+        if (accessToken == null){
+            runBlocking {
+                MemberRepository.init(context, "AuthInterceptor")
+            }
         }
 
         // 토큰 추가

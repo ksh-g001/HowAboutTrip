@@ -53,6 +53,12 @@ class BookingViewModel @Inject constructor(
     val recentAirplaneLiveData : LiveData<List<RecentAirplane>>
         get() = _recentAirplaneLiveData
 
+    fun deleteAll(){
+        viewModelScope.launch(Dispatchers.IO) {
+            bookingRepository.deleteAll()
+        }
+    }
+
     fun fetchRecentAirplanes() {
         viewModelScope.launch(Dispatchers.IO) {
             val recentAirplanes = bookingRepository.fetchRecentAirplanes()

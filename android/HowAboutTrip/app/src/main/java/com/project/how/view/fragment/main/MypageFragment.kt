@@ -23,7 +23,9 @@ import com.project.how.view.activity.mypage.WeatherActivity
 import com.project.how.view.activity.record.bill.BillListActivity
 import com.project.how.view.activity.record.picture.LocationMapActivity
 import com.project.how.view_model.MemberViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MypageFragment : Fragment() {
     private var _binding : FragmentMypageBinding? = null
     private val binding : FragmentMypageBinding

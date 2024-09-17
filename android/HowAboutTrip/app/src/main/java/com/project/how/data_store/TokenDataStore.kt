@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 object TokenDataStore {
-    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "tokens")
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "tokens")
 
-    val ACCESS_TOKEN = stringPreferencesKey("access_token")
-    val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+    private val ACCESS_TOKEN = stringPreferencesKey("access_token")
+    private val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
 
     suspend fun saveTokens(context: Context, tokens : Tokens){
         context.dataStore.edit {

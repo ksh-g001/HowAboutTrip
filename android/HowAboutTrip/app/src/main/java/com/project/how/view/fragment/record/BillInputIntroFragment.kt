@@ -81,6 +81,10 @@ class BillInputIntroFragment : Fragment(), OnYesOrNoListener {
         }
     }
 
+    override fun onDeleteListener() {
+
+    }
+
     override fun onScheduleDeleteListener(position: Int) {
         TODO("Not yet implemented")
     }
