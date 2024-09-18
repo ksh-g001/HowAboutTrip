@@ -3,14 +3,16 @@
     <SwitchPreferenceCompat
         app:key="@string/preference_key_alarm"
         app:title="알람 켜키/끄기"
-        app:summary="디데이 알람 설정"/>
+        app:summary="2주 이내의 일정의 디데이 알람"
+        app:defaultValue="true"/>
 
     <com.project.how.view.preference.DividerPreference/>
 
     <SwitchPreferenceCompat
         app:key="@string/preference_key_location"
         app:title="위치 서비스 활성화"
-        app:summary="기기의 현재 위치 정보 "/>
+        app:summary="기기의 현재 위치 정보"
+        app:defaultValue="true"/>
 
     <com.project.how.view.preference.DividerPreference/>
 

@@ -15,9 +15,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.project.how.R
 import com.project.how.background.workmanager.AlarmWorkManager
@@ -102,18 +105,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun scheduleWork() {
-        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(12, TimeUnit.HOURS)
-            .addTag("Alarm_work")
+        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(1, TimeUnit.HOURS)
+            .addTag("alarm_work")
             .build()
-        WorkManager.getInstance(this)
-            .getWorkInfosByTagLiveData("Alarm_work")
-            .observe(this) { workInfoList ->
-                if (workInfoList.isNullOrEmpty()) {
-                    WorkManager.getInstance(this).enqueue(workRequest)
-                } else {
-                    Log.d("WorkManager", "Work is already scheduled.")
+        val workManager = WorkManager.getInstance(this).apply {
+            enqueue(workRequest)
+            getWorkInfosByTagLiveData(getString(R.string.alarm_workmanager))
+                .observe(this@MainActivity) { workInfoList ->
+                    if (workInfoList.isNullOrEmpty()) {
+                        Log.d("AlarmWorkManager", "Work is scheduled.")
+                    } else {
+                        Log.d("AlarmWorkManager", "Work is already scheduled.")
+                    }
+                }
+        }
+
+        workManager.getWorkInfoByIdLiveData(workRequest.id).observe(this, Observer { workInfo ->
+            if (workInfo != null) {
+                when (workInfo.state) {
+                    WorkInfo.State.ENQUEUED -> Log.d("AlarmWorkManager", "작업이 대기열에 추가됨")
+                    WorkInfo.State.RUNNING -> Log.d("AlarmWorkManager", "작업이 실행 중")
+                    WorkInfo.State.SUCCEEDED -> Log.d("AlarmWorkManager", "작업이 성공적으로 완료됨")
+                    WorkInfo.State.FAILED -> Log.d("AlarmWorkManager", "작업이 실패함\ncause by ${workInfo.outputData}")
+                    WorkInfo.State.CANCELLED -> Log.d("AlarmWorkManager", "작업이 취소됨")
+                    else -> {}
                 }
             }
+        })
 
     }
 

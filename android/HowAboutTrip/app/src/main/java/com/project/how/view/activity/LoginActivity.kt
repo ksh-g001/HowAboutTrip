@@ -39,6 +39,17 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         googleSignInRequest = GoogleSignIn.getClient(this, gso)
+
+        viewModel.currentUserLiveData.observe(this) { user ->
+            if (user != null) {
+                Log.d("onStart", "viewModel.currentUserLiveData.value != null")
+                autoLogin()
+            } else {
+                googleSignInRequest.signOut()
+                Log.d("onStart", "viewModel.currentUserLiveData.value == null")
+            }
+        }
+
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if(it.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -46,24 +57,14 @@ class LoginActivity : AppCompatActivity() {
                     val account = task.result
                     viewModel.getUser(account.idToken!!)
                     viewModel.userLiveData.observe(this){user->
-                        Log.d("activityResultLauncher", "Login Success\nidToken : ${account.idToken}\nid : ${account.id}\nemail : ${account.email}\nuid : ${user.uid}")
-                        sendUid(user.uid)
+                        user?.let {
+                            Log.d("activityResultLauncher", "Login Success\nidToken : ${account.idToken}\nid : ${account.id}\nemail : ${account.email}\nuid : ${user.uid}")
+                            sendUid(user.uid)
+                        }
                     }
                 } catch (e: Exception){
                     Log.e("activityResultLauncher", "Login Failed\nError : ${e.stackTrace}\n${e.message}")
                 }
-            }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.currentUserLiveData.observe(this) { user ->
-            if (user != null) {
-                Log.d("onStart", "viewModel.currentUserLiveData.value != null")
-                autoLogin()
-            } else {
-                Log.d("onStart", "viewModel.currentUserLiveData.value == null")
             }
         }
     }
@@ -96,8 +97,11 @@ class LoginActivity : AppCompatActivity() {
                     val account = task.result
                     viewModel.getUser(account.idToken!!)
                     viewModel.userLiveData.observe(this){user->
-                        Log.d("autoLogin", "Auto Login Success\nidToken : ${account.idToken}\nid : ${account.id}\nemail : ${account.email}\nuid : ${user.uid}")
-                        sendUid(user.uid)
+                        user?.let {
+                            Log.d("autoLogin", "Auto Login Success\nidToken : ${account.idToken}\nid : ${account.id}\nemail : ${account.email}\nuid : ${user.uid}")
+                            sendUid(user.uid)
+
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e("autoLogin", "Auto Login Failed\nError : ${e.stackTrace}\n${e.message}")

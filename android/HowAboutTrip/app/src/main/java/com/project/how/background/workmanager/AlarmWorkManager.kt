@@ -23,6 +23,7 @@ import retrofit2.Response
 import retrofit2.awaitResponse
 import java.util.Calendar
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltWorker
 class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: WorkerParameters):
@@ -85,10 +86,12 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
 
         Log.d("AlarmWorkManager", "PendingIntent created: $pendingIntent")
 
+        val random = Random.nextInt(45)
+
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, 10)
-            set(Calendar.MINUTE, 0)
+            set(Calendar.MINUTE, random)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 
@@ -98,7 +101,7 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
             }
         }
 
-        alarmManager.setExact(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             pendingIntent)

@@ -370,4 +370,5 @@
     <string name="setting_ui_error">설정화면에서 오류가 발생했습니다.</string>
     <string name="delete_check_message">최근 본 항공권과 숙소 정보를 지우실 겁니까?</string>
     <string name="long_delay_warning">해당 작업은 오래 걸릴 수도 있습니다.</string>
+    <string name="alarm_workmanager">alarm_work</string>
 </resources>

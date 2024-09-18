@@ -16,6 +16,7 @@ import com.project.how.data_class.dto.member.GetInfoResponse
 import com.project.how.data_class.dto.member.SignUpRequest
 import com.project.how.model.MemberRepository
 import com.project.how.network.client.MemberRetrofit
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -36,9 +37,9 @@ object MemberViewModel : ViewModel() {
     private val _tokensLiveData = memberRepository.tokensLiveData
     private val _tokensSaveLiveData = memberRepository.tokensSaveLiveData
     private val _infoLiveData = memberRepository.memberInfoLiveData
-    val currentUserLiveData: LiveData<FirebaseUser>
+    val currentUserLiveData: LiveData<FirebaseUser?>
         get() = _currentUserLiveData
-    val userLiveData: LiveData<FirebaseUser>
+    val userLiveData: LiveData<FirebaseUser?>
         get() = _userLiveData
     val tokensLiveData: LiveData<Tokens>
         get() = _tokensLiveData
@@ -62,6 +63,10 @@ object MemberViewModel : ViewModel() {
         memberRepository.checkCurrentUser()
         Log.d("LoginViewModel init", "checkCurrentUser end")
         authRecreateCount = 0
+    }
+
+    fun logout(context: Context)= viewModelScope.launch(Dispatchers.IO){
+        memberRepository.logout(context)
     }
 
     fun getUser(idToken: String) {

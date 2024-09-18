@@ -22,6 +22,14 @@ object TokenDataStore {
             it[REFRESH_TOKEN] = tokens.refreshToken
         }
     }
+
+    suspend fun clearTokens(context: Context){
+        context.dataStore.edit {
+            it.remove(ACCESS_TOKEN)
+            it.remove(REFRESH_TOKEN)
+        }
+    }
+
     fun getTokens(context: Context): Flow<Tokens?> = flow {
         context.dataStore.data.collect {
             val accessToken = it[ACCESS_TOKEN]

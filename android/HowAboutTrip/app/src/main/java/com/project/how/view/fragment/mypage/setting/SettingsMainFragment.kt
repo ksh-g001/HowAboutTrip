@@ -1,5 +1,6 @@
 package com.project.how.view.fragment.mypage.setting
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,16 +9,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import androidx.work.WorkManager
 import com.project.how.R
 import com.project.how.interface_af.OnDialogListener
 import com.project.how.interface_af.OnYesOrNoListener
+import com.project.how.view.activity.LoginActivity
 import com.project.how.view.dialog.WarningDialog
 import com.project.how.view.dialog.YesOrNoDialog
 import com.project.how.view.preference.DividerPreference
 import com.project.how.view_model.BookingViewModel
+import com.project.how.view_model.MemberViewModel
 import com.project.how.view_model.SettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYesOrNoListener {
@@ -77,21 +82,21 @@ class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYes
     private fun handlePreferenceClick(){
         alarmPreference.setOnPreferenceChangeListener { preference, newValue ->
             if (alarmPreference.isChecked) {
-                Log.d("SettingMainFragment", "alarm on\n${alarmPreference.isChecked}\t$newValue")
-                settingViewModel.setAlarmOff(requireContext())
-            } else {
-                Log.d("SettingMainFragment", "alarm off\n${alarmPreference.isChecked}\t$newValue")
+                Log.d("SettingMainFragment", "alarm off")
                 settingViewModel.setAlarmOn(requireContext())
+            } else {
+                Log.d("SettingMainFragment", "alarm on")
+                settingViewModel.setAlarmOff(requireContext())
             }
             true
         }
 
         locationPreference.setOnPreferenceChangeListener{ preference, newValue ->
             if (locationPreference.isChecked) {
-                Log.d("SettingMainFragment", "location off\n${locationPreference.isChecked}")
+                Log.d("SettingMainFragment", "location off")
                 settingViewModel.setLocationOn(requireContext())
             }else{
-                Log.d("SettingMainFragment", "location on\n${locationPreference.isChecked}")
+                Log.d("SettingMainFragment", "location on")
                 settingViewModel.setLocationOff(requireContext())
             }
             true
@@ -103,6 +108,18 @@ class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYes
                 0,
                 this@SettingsMainFragment)
                 .show(childFragmentManager, "YesOrNoDialog")
+            true
+        }
+
+        logoutPreference.setOnPreferenceClickListener {
+            runBlocking {
+                MemberViewModel.logout(requireContext())
+                WorkManager.getInstance(requireContext()).cancelAllWorkByTag(getString(R.string.alarm_workmanager))
+            }
+            val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
             true
         }
     }

@@ -13,14 +13,14 @@ import com.project.how.data_store.TokenDataStore
 
 object MemberRepository {
     private val firebaseAuth = FirebaseAuth.getInstance()
-    private val _currentUserLiveData = MutableLiveData<FirebaseUser>()
-    private val _userLiveData = MutableLiveData<FirebaseUser>()
+    private val _currentUserLiveData = MutableLiveData<FirebaseUser?>()
+    private val _userLiveData = MutableLiveData<FirebaseUser?>()
     private val _tokensLiveData = MutableLiveData<Tokens>()
     private val _tokensSaveLiveData = MutableLiveData<Boolean>()
     private val _memberInfoLiveData = MutableLiveData<MemberInfo>()
-    val currentUserLiveData : LiveData<FirebaseUser>
+    val currentUserLiveData : LiveData<FirebaseUser?>
         get() = _currentUserLiveData
-    val userLiveData: LiveData<FirebaseUser>
+    val userLiveData: LiveData<FirebaseUser?>
         get() = _userLiveData
     val tokensLiveData : LiveData<Tokens>
         get() = _tokensLiveData
@@ -65,6 +65,14 @@ object MemberRepository {
         }else{
             Log.d("checkCurrentUser", "firebaseAuth.current == null")
         }
+    }
+
+    suspend fun logout(context: Context){
+        firebaseAuth.signOut()
+        _tokensSaveLiveData.postValue(false)
+        _currentUserLiveData.postValue(null)
+        _userLiveData.postValue(null)
+        TokenDataStore.clearTokens(context)
     }
 
     suspend fun getTokens(context: Context, accessToken : String, refreshToken: String) {

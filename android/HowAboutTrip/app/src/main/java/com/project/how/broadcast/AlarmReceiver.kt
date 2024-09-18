@@ -19,6 +19,7 @@ import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
+        Log.d("AlarmReceiver", "Receive : ${intent?.action}")
         val dday = intent?.getLongExtra("dday", -1) ?: -1L
         val scheduleName = intent?.getStringExtra("scheduleName") ?: ""
         if (dday == -1L){
@@ -40,7 +41,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setContentTitle(title)
             .setContentText(text)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .build()
 
@@ -61,7 +62,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val channel = NotificationChannel(
                 "dday_channel",
                 "D-Day 알람",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 description = "D-Day 알람을 위한 채널"
             }
