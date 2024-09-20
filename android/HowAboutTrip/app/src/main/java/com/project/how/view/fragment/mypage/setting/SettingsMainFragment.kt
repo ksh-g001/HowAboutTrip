@@ -1,16 +1,31 @@
 package com.project.how.view.fragment.mypage.setting
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.project.how.R
+import com.project.how.background.workmanager.AlarmWorkManager
+import com.project.how.background.workmanager.AlarmWorkManager.Companion.REQ_DDAY_ALARM
+import com.project.how.broadcast.AlarmReceiver
 import com.project.how.interface_af.OnDialogListener
 import com.project.how.interface_af.OnYesOrNoListener
 import com.project.how.view.activity.LoginActivity
@@ -23,13 +38,15 @@ import com.project.how.view_model.SettingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
+import kotlin.math.truncate
 
 @AndroidEntryPoint
 class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYesOrNoListener {
     private val settingViewModel: SettingViewModel by viewModels()
     private val bookingViewModel: BookingViewModel by viewModels()
     private lateinit var alarmPreference: SwitchPreferenceCompat
-    private lateinit var locationPreference: SwitchPreferenceCompat
+    private lateinit var locationPreference: Preference
     private lateinit var privacyPreference: Preference
     private lateinit var openSourcePreference: Preference
     private lateinit var clearPreference: Preference
@@ -46,18 +63,40 @@ class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYes
         lifecycleScope.launch {
             init()
         }
+
+
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         settingViewModel.settingLiveData.observe(viewLifecycleOwner){
+            Log.d("SettingMainFragment", "init : ${initNeed}\nsettingLiveData : $it")
             if(initNeed){
-                Log.d("SettingMainFragment", "settingLiveData : $it")
                 alarmPreference.isChecked = it.alarmSettingStatus
-                locationPreference.isChecked = it.locationSettingStatus
                 initNeed = false
             }
         }
+
+        WorkManager.getInstance(requireContext()).getWorkInfosByTagLiveData(getString(R.string.alarm_workmanager)).observe(viewLifecycleOwner) { workInfos ->
+            // 작업 상태를 확인
+            if (workInfos.isNullOrEmpty()) {
+                Log.d("WorkManager", "No work found with the specified tag.")
+            } else {
+                for (workInfo in workInfos) {
+                    Log.d("WorkManager", "Work ID: ${workInfo.id}, State: ${workInfo.state}")
+                }
+            }
+        }
+
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun init(){
@@ -83,22 +122,18 @@ class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYes
         alarmPreference.setOnPreferenceChangeListener { preference, newValue ->
             if (alarmPreference.isChecked) {
                 Log.d("SettingMainFragment", "alarm off")
-                settingViewModel.setAlarmOn(requireContext())
+                alarmCancel()
+                settingViewModel.setAlarmOff(requireContext())
             } else {
                 Log.d("SettingMainFragment", "alarm on")
-                settingViewModel.setAlarmOff(requireContext())
+                setAlarm()
+                settingViewModel.setAlarmOn(requireContext())
             }
             true
         }
 
-        locationPreference.setOnPreferenceChangeListener{ preference, newValue ->
-            if (locationPreference.isChecked) {
-                Log.d("SettingMainFragment", "location off")
-                settingViewModel.setLocationOn(requireContext())
-            }else{
-                Log.d("SettingMainFragment", "location on")
-                settingViewModel.setLocationOff(requireContext())
-            }
+        locationPreference.setOnPreferenceClickListener {
+            openAppSettings()
             true
         }
 
@@ -122,6 +157,36 @@ class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYes
             startActivity(intent)
             true
         }
+    }
+
+    private fun setAlarm(){
+        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(1, TimeUnit.HOURS)
+            .addTag(getString(R.string.alarm_workmanager))
+            .build()
+        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
+            getString(R.string.alarm_workmanager),
+            ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", requireContext().packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private fun alarmCancel(){
+        WorkManager.getInstance(requireContext()).cancelAllWorkByTag(getString(R.string.alarm_workmanager))
+        val intent = Intent(requireContext(), AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(requireContext(),
+            REQ_DDAY_ALARM,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
     }
 
     private fun error(){

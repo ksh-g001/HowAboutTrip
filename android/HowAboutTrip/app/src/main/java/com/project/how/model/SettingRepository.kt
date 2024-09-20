@@ -12,61 +12,69 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Singleton
 
 
 @Singleton
 class SettingRepository {
-    private var alarmOn = false
-    private var locationOn = false
+    private val setting = Setting(false, false)
     private var _settingLiveData = MutableLiveData<Setting>()
     val settingLiveData: LiveData<Setting>
         get() = _settingLiveData
+    private val mutex = Mutex()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     suspend fun init(context : Context){
         val alarmScope = CoroutineScope(Dispatchers.IO).launch {
             SettingDataStore.getAlarmStatus(context).collect{
-                alarmOn = it
-                Log.d("SettingRepository init", "alarmOn : $alarmOn")
+                mutex.withLock {
+                    setting.alarmSettingStatus = it
+                    Log.d("SettingRepository init", "alarmOn : $it")
+                }
             }
         }
 
         val locationScope = CoroutineScope(Dispatchers.IO).launch {
             SettingDataStore.getLocationStatus(context).collect{
-                locationOn = it
-                Log.d("SettingRepository init", "locationOn : $locationOn")
+                mutex.withLock {
+                    setting.locationSettingStatus = it
+                    Log.d("SettingRepository init", "locationOn : $it")
+                }
             }
         }
 
-        joinAll(alarmScope, locationScope)
-        Log.d("SettingRepository init", "alarmOn : $alarmOn, locationOn : $locationOn")
-        _settingLiveData.postValue(Setting(alarmOn, locationOn))
+        alarmScope.join()
+        locationScope.join()
+
+        Log.d("SettingRepository init", "end $setting")
+        _settingLiveData.postValue(setting)
     }
 
     fun setAlarmOn(context : Context) = CoroutineScope(Dispatchers.IO).launch {
         SettingDataStore.setAlarmOn(context)
-        alarmOn = true
-        _settingLiveData.postValue(Setting(alarmOn, locationOn))
+        setting.alarmSettingStatus = true
+        _settingLiveData.postValue(setting)
 
     }
 
     fun setAlarmOff(context : Context) = CoroutineScope(Dispatchers.IO).launch {
         SettingDataStore.setAlarmOff(context)
-        alarmOn = false
-        _settingLiveData.postValue(Setting(alarmOn, locationOn))
+        setting.alarmSettingStatus = false
+        _settingLiveData.postValue(setting)
 
     }
 
     fun setLocationOn(context : Context) = CoroutineScope(Dispatchers.IO).launch {
         SettingDataStore.setLocationOn(context)
-        locationOn = true
-        _settingLiveData.postValue(Setting(alarmOn, locationOn))
+        setting.locationSettingStatus = true
+        _settingLiveData.postValue(setting)
     }
 
     fun setLocationOff(context : Context) = CoroutineScope(Dispatchers.IO).launch {
         SettingDataStore.setLocationOff(context)
-        locationOn = false
-        _settingLiveData.postValue(Setting(alarmOn, locationOn))
+        setting.locationSettingStatus = false
+        _settingLiveData.postValue(setting)
     }
 }

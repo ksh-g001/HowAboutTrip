@@ -27,16 +27,14 @@ class SplashActivity : AppCompatActivity() {
 
         memberViewModel.memberInfoLiveData.observe(this, object : Observer<MemberInfo> {
             override fun onChanged(value: MemberInfo) {
-                if (value != null) {
-                    Log.d("tokenSaveLiveData observe", "memberInfoLiveData\nname : ${value.name}\nphone : ${value.phone}\nbirth : ${value.birth}")
-                    if (value.name == getString(R.string.error)) {
-                        Toast.makeText(this@SplashActivity, "이전의 회원가입 과정이 정상적으로 진행되지 않았습니다.\n모든 정보를 기입해주세요.", Toast.LENGTH_SHORT).show()
-                        moveSignUp()
-                    } else {
-                        moveMain()
-                    }
-                    memberViewModel.memberInfoLiveData.removeObserver(this)
+                Log.d("tokenSaveLiveData observe", "memberInfoLiveData\nname : ${value.name}\nphone : ${value.phone}\nbirth : ${value.birth}")
+                if (value.name == getString(R.string.error)) {
+                    Toast.makeText(this@SplashActivity, "이전의 회원가입 과정이 정상적으로 진행되지 않았습니다.\n모든 정보를 기입해주세요.", Toast.LENGTH_SHORT).show()
+                    moveSignUp()
+                } else {
+                    moveMain()
                 }
+                memberViewModel.memberInfoLiveData.removeObserver(this)
             }
         })
 

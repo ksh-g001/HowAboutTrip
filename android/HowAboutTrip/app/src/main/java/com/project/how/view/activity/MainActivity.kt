@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -48,9 +49,17 @@ class MainActivity : AppCompatActivity() {
         binding.main = this
         binding.lifecycleOwner = this
 
-        settingViewModel.init(this)
+        lifecycleScope.launch {
+            settingViewModel.init(this@MainActivity)
+        }
 
-        scheduleWork()
+        lifecycleScope.launch {
+            settingViewModel.settingLiveData.observe(this@MainActivity){setting->
+                Log.d("SettingMainFragment", "MainActivity\nsettingLiveData : $setting")
+                if (setting.alarmSettingStatus)
+                    scheduleWork()
+            }
+        }
 
         val menu = intent.getIntExtra(getString(R.string.menu_intent), 2)
 
@@ -89,9 +98,6 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             MemberViewModel.getInfo(applicationContext).collect{
             }
-
-
-
         }
     }
 
@@ -106,10 +112,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun scheduleWork() {
         val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(1, TimeUnit.HOURS)
-            .addTag("alarm_work")
+            .addTag(getString(R.string.alarm_workmanager))
             .build()
         val workManager = WorkManager.getInstance(this).apply {
-            enqueue(workRequest)
+            enqueueUniquePeriodicWork(
+                getString(R.string.alarm_workmanager),
+                ExistingPeriodicWorkPolicy.UPDATE,
+                workRequest
+            )
             getWorkInfosByTagLiveData(getString(R.string.alarm_workmanager))
                 .observe(this@MainActivity) { workInfoList ->
                     if (workInfoList.isNullOrEmpty()) {

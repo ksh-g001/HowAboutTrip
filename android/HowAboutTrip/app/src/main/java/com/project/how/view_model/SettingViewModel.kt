@@ -1,11 +1,18 @@
 package com.project.how.view_model
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkManager
+import com.project.how.R
+import com.project.how.background.workmanager.AlarmWorkManager.Companion.REQ_DDAY_ALARM
+import com.project.how.broadcast.AlarmReceiver
 import com.project.how.data_class.Setting
 import com.project.how.model.SettingRepository
 import kotlinx.coroutines.Dispatchers

@@ -8,9 +8,9 @@
 
     <com.project.how.view.preference.DividerPreference/>
 
-    <SwitchPreferenceCompat
+    <Preference
         app:key="@string/preference_key_location"
-        app:title="위치 서비스 활성화"
+        app:title="위치 서비스 설정"
         app:summary="기기의 현재 위치 정보"
         app:defaultValue="true"/>
 

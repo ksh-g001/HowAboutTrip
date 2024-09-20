@@ -32,6 +32,12 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
         private var scheduleName = ""
         private var nCheck = false
     override suspend fun doWork(): Result = coroutineScope{
+        if (isStopped) {
+            Log.d("AlarmWorkManager", "Work was stopped before completion.")
+            alarmCancel()
+            return@coroutineScope Result.failure()
+        }
+
         try {
             getDday()
         }catch (e : Exception){
@@ -69,15 +75,10 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
         }
     }
 
-
     @SuppressLint("ScheduleExactAlarm")
     private fun setDdayAlarm(dday : Long, scheduleName : String){
         val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
-            putExtra("EXTRA_ALARM_COUNT", 1)
-            putExtra("dday", dday)
-            putExtra("scheduleName", scheduleName)
-        }
+        val intent = Intent(applicationContext, AlarmReceiver::class.java)
 
         val pendingIntent = PendingIntent.getBroadcast(applicationContext,
             REQ_DDAY_ALARM,
@@ -106,7 +107,23 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
             calendar.timeInMillis,
             pendingIntent)
 
-        Log.d("AlarmWorkManager", "Alarm set for: ${calendar.timeInMillis} with PendingIntent: $pendingIntent")
+        Log.d("AlarmWorkManager'", "Alarm set for: ${calendar.timeInMillis} with PendingIntent: $pendingIntent")
+    }
+
+    private fun alarmCancel(){
+        val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
+            putExtra("EXTRA_ALARM_COUNT", 1)
+            putExtra("dday", dday)
+            putExtra("scheduleName", scheduleName)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext,
+            REQ_DDAY_ALARM,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        alarmManager.cancel(pendingIntent)
     }
 
     companion object{
