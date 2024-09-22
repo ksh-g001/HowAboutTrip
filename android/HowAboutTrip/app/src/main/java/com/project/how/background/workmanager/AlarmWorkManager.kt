@@ -88,11 +88,10 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            add(Calendar.MINUTE, 1)
-//            set(Calendar.HOUR_OF_DAY, 10)
-//            set(Calendar.MINUTE, random)
-//            set(Calendar.SECOND, 0)
-//            set(Calendar.MILLISECOND, 0)
+            set(Calendar.HOUR_OF_DAY, 10)
+            set(Calendar.MINUTE, random)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
 
             // 오늘의 오전 10시가 이미 지났다면 내일 오전 10시로 설정
             if (timeInMillis < System.currentTimeMillis()) {
