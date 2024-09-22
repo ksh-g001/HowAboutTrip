@@ -43,12 +43,4 @@ class SettingViewModel : ViewModel() {
     fun setAlarmOff(context : Context) = viewModelScope.launch(Dispatchers.IO) {
         settingRepository.setAlarmOff(context)
     }
-
-    fun setLocationOn(context : Context) = viewModelScope.launch(Dispatchers.IO) {
-        settingRepository.setLocationOn(context)
-    }
-
-    fun setLocationOff(context : Context) = viewModelScope.launch(Dispatchers.IO) {
-        settingRepository.setLocationOff(context)
-    }
 }

@@ -49,15 +49,10 @@ class MainActivity : AppCompatActivity() {
         binding.main = this
         binding.lifecycleOwner = this
 
-        lifecycleScope.launch {
-            settingViewModel.init(this@MainActivity)
-        }
-
-        lifecycleScope.launch {
-            settingViewModel.settingLiveData.observe(this@MainActivity){setting->
-                Log.d("SettingMainFragment", "MainActivity\nsettingLiveData : $setting")
-                if (setting.alarmSettingStatus)
-                    scheduleWork()
+        settingViewModel.settingLiveData.observe(this@MainActivity){setting->
+            Log.d("Setting", "MainActivity\nsettingLiveData : $setting")
+            if (setting.alarmSettingStatus) {
+                scheduleWork()
             }
         }
 
@@ -93,11 +88,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
             MemberViewModel.getInfo(applicationContext).collect{
             }
+            settingViewModel.init(this@MainActivity)
         }
     }
 

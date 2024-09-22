@@ -10,16 +10,10 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.project.how.broadcast.AlarmReceiver
-import com.project.how.data_class.dto.schedule.GetFastestSchedulesResponse
 import com.project.how.network.client.ScheduleRetrofit
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.awaitResponse
 import java.util.Calendar
 import javax.inject.Inject
@@ -76,9 +70,12 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    private fun setDdayAlarm(dday : Long, scheduleName : String){
+    private fun setDdayAlarm(dday: Long, scheduleName: String){
         val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(applicationContext, AlarmReceiver::class.java)
+        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
+            putExtra("dday", dday)
+            putExtra("scheduleName", scheduleName)
+        }
 
         val pendingIntent = PendingIntent.getBroadcast(applicationContext,
             REQ_DDAY_ALARM,
@@ -91,10 +88,11 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
 
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            set(Calendar.HOUR_OF_DAY, 10)
-            set(Calendar.MINUTE, random)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
+            add(Calendar.MINUTE, 1)
+//            set(Calendar.HOUR_OF_DAY, 10)
+//            set(Calendar.MINUTE, random)
+//            set(Calendar.SECOND, 0)
+//            set(Calendar.MILLISECOND, 0)
 
             // 오늘의 오전 10시가 이미 지났다면 내일 오전 10시로 설정
             if (timeInMillis < System.currentTimeMillis()) {

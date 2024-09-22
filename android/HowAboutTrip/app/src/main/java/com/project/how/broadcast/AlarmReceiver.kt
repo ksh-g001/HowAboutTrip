@@ -23,7 +23,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val dday = intent?.getLongExtra("dday", -1) ?: -1L
         val scheduleName = intent?.getStringExtra("scheduleName") ?: ""
         if (dday == -1L){
-            Log.d("AlarmReceiver", "failed(dday is -1)")
+            Log.d("AlarmReceiver", "failed(dday is -1) or alarmCount > 1")
             return
         }
         showNotify(context, dday, scheduleName)
