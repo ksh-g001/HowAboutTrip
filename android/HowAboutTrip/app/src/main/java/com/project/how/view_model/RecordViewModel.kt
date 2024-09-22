@@ -406,13 +406,7 @@ class RecordViewModel : ViewModel() {
                                     trySend(SUCCESS)
                                 }
                                 BAD_REQUEST->{
-                                    val error = p1.body()
-                                    error?.let {
-                                        if (it.errorMessage == "모든 영수증 ID와 날짜를 제공해야 합니다.")
-                                            trySend(NOT_ALL)
-                                        else
-                                            trySend(DUPLICATE_ORDER_NUM)
-                                    }
+                                    trySend(NOT_ALL)
                                 }
                                 else->{
                                     trySend(UNKNOWN)

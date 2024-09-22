@@ -133,8 +133,8 @@ class BillActivity :
     }
 
     private suspend fun changeOrder(backPressed : Boolean = false) {
-        recordViewModel.changeOrderReceipt(id, getChangeOrderReceipt()).collect { result ->
-            handleOrderChangeResult(result, backPressed)
+        recordViewModel.changeOrderReceipt(id, getChangeOrderReceipt()).collect { resultCode ->
+            handleOrderChangeResult(resultCode, backPressed)
         }
         Log.d("BillActivity", "changeOrder is finish")
     }
@@ -143,16 +143,17 @@ class BillActivity :
         val messageResId = when (result) {
             RecordViewModel.SUCCESS -> null
             RecordViewModel.NETWORK_FAILED -> R.string.server_network_error
-            RecordViewModel.NOT_ALL -> R.string.app_error
+            RecordViewModel.NOT_ALL -> R.string.wait_warning
             RecordViewModel.DUPLICATE_ORDER_NUM -> R.string.app_error
             RecordViewModel.UNKNOWN -> R.string.unknown_error
             else -> R.string.unknown_error
         }
         Log.d("BillActivity", "handleOrderChangeResult : $result")
 
+        binding.swipeRefreshLayout.isRefreshing = false
+
         messageResId?.let {
             Toast.makeText(this, getString(it, result.toString()), Toast.LENGTH_SHORT).show()
-            binding.swipeRefreshLayout.isRefreshing = false
         } ?: if (backPressed) moveBillList() else recordViewModel.getReceiptList(id)
     }
 
@@ -302,6 +303,7 @@ class BillActivity :
                     totalPrice -= adapter.remove(position)
                     binding.cost.text =
                         NumberFormat.getNumberInstance(Locale.getDefault()).format(totalPrice)
+                    receiptList.removeIf { it.receiptId == id }
                 }
             }
         }
