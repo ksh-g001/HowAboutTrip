@@ -97,6 +97,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.hilt:hilt-common:1.2.0")
+    implementation("androidx.activity:activity:1.9.2")
     kapt("com.google.dagger:hilt-android-compiler:2.46")
 
     implementation("com.squareup.retrofit:retrofit:2.0.0-beta2")

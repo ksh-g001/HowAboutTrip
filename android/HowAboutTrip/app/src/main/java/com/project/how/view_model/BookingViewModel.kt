@@ -73,12 +73,6 @@ class BookingViewModel @Inject constructor(
         }
     }
 
-    fun deleteAllRecentAirplanes(){
-        viewModelScope.launch(Dispatchers.IO){
-            bookingRepository.deleteAllRecentAirplane()
-        }
-    }
-
     fun getFlightOffers(getFlightOffersRequest: GetFlightOffersRequest) : Flow<Int> = callbackFlow{
         BookingRetrofit.getApiService()?.let {apiService ->
             apiService.getFlightOffers(getFlightOffersRequest)

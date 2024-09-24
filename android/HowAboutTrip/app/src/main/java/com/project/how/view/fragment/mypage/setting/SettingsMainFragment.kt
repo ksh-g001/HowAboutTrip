@@ -160,7 +160,7 @@ class SettingsMainFragment : PreferenceFragmentCompat(), OnDialogListener, OnYes
     }
 
     private fun setAlarm(){
-        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(1, TimeUnit.HOURS)
+        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(4, TimeUnit.HOURS)
             .addTag(getString(R.string.alarm_workmanager))
             .build()
         WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(

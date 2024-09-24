@@ -7,13 +7,15 @@ import com.project.how.data_class.dto.booking.airplane.GetFlightOffersResponse
 import com.project.how.data_class.dto.booking.airplane.GetLikeFlightResponse
 import com.project.how.data_class.dto.booking.airplane.GetOneWayFlightOffersResponse
 import com.project.how.data_class.roomdb.RecentAirplane
+import com.project.how.roomdb.dao.AlarmDao
 import com.project.how.roomdb.dao.RecentAirplaneDao
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BookingRepository @Inject constructor(
-    private val recentAirplaneDao : RecentAirplaneDao
+    private val recentAirplaneDao : RecentAirplaneDao,
+    private val alarmDao : AlarmDao
 ) {
     private val _flightOffersLiveData = MutableLiveData<GetFlightOffersResponse>()
     private val _oneWayFlightLiveData = MutableLiveData<GetOneWayFlightOffersResponse>()
@@ -50,10 +52,6 @@ class BookingRepository @Inject constructor(
     suspend fun addRecentAirplane(recentAirplane: RecentAirplane) {
         Log.d("RoomDB", "addRecentAirplane()\nid : ${recentAirplane.id}\nname : ${recentAirplane.name}\ntime1 : ${recentAirplane.time1}\ncreateAt : ${recentAirplane.createdAt}\nurl : ${recentAirplane.skyscannerUrl}")
         recentAirplaneDao.insert(recentAirplane)
-    }
-
-    suspend fun deleteAllRecentAirplane(){
-        recentAirplaneDao.deleteAll()
     }
 
     fun getRecentAirplane(data : List<RecentAirplane>){

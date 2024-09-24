@@ -388,9 +388,9 @@ class CalendarEditActivity
 
     private fun moveCalendarFragment(){
         val intent = Intent(this, CalendarListActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
-
+        finish()
     }
 
 

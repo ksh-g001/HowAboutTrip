@@ -372,4 +372,6 @@
     <string name="long_delay_warning">해당 작업은 오래 걸릴 수도 있습니다.</string>
     <string name="alarm_workmanager">alarm_work</string>
     <string name="wait_warning">이전 동기화 작업 중입니다. 조금 뒤에 다시 시도해주세요.</string>
+    <string name="back_press">한 번만 더 누르시면 앱이 종료됩니다.</string>
+    <string name="load_more">더보기</string>
 </resources>

@@ -15,6 +15,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.project.how.R
 import com.project.how.background.workmanager.AlarmWorkManager.Companion.REQ_DDAY_ALARM
+import com.project.how.data_class.roomdb.Alarm
+import com.project.how.di.entrypoint.AlarmReceiverEntryPoint
+import com.project.how.roomdb.db.AppDatabase
+import com.project.how.view_model.AlarmRecordViewModel
+import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -51,6 +59,18 @@ class AlarmReceiver : BroadcastReceiver() {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             NotificationManagerCompat.from(context).notify(REQ_DDAY_ALARM, notification)
+            try {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val entryPoint = EntryPointAccessors.fromApplication(context, AlarmReceiverEntryPoint::class.java)
+                    val alarmDao = entryPoint.alarmDao()
+
+                    alarmDao.insert(Alarm(
+                        text = "$scheduleName 디데이까지 ${dday}일 남았습니다."
+                    ))
+                }
+            }catch (e : Exception){
+                Log.e("AlarmReceiver", "notify error : $e")
+            }
         }
     }
 

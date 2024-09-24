@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -31,9 +31,13 @@
         android:theme="@style/Base.Theme.HowAboutTrip"
         tools:targetApi="31">
         <activity
-            android:name=".view.activity.mypage.SettingActivity"
+            android:name=".view.activity.alarm.AlarmActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".view.activity.mypage.SettingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activity.record.picture.GalleryActivity"
             android:exported="false"
@@ -129,8 +133,7 @@
             android:name=".view.activity.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.HowAboutTrip.BlackStatusBar">
-        </activity>
+            android:theme="@style/Theme.HowAboutTrip.BlackStatusBar"></activity>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -143,9 +146,10 @@
             android:name="android.adservices.AD_SERVICES_CONFIG"
             android:resource="@xml/gma_ad_services_config"
             tools:replace="android:resource" />
-        <receiver android:name=".broadcast.AlarmReceiver"
-            android:exported="true">
-        </receiver>
+
+        <receiver
+            android:name=".broadcast.AlarmReceiver"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

@@ -10,6 +10,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -27,6 +29,7 @@ import com.project.how.R
 import com.project.how.background.workmanager.AlarmWorkManager
 import com.project.how.databinding.ActivityMainBinding
 import com.project.how.view.activity.ai.AddAICalendarActivity
+import com.project.how.view.activity.alarm.AlarmActivity
 import com.project.how.view.fragment.main.CalendarFragment
 import com.project.how.view.fragment.main.MypageFragment
 import com.project.how.view.fragment.main.RecordFragment
@@ -41,6 +44,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val settingViewModel : SettingViewModel by viewModels()
+    private var backCount = 0
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +59,17 @@ class MainActivity : AppCompatActivity() {
                 scheduleWork()
             }
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                if (backCount == 1){
+                    finishAffinity()
+                    return
+                }
+                backCount++
+                Toast.makeText(this@MainActivity, getString(R.string.back_press), Toast.LENGTH_SHORT).show()
+            }
+        })
 
         val menu = intent.getIntExtra(getString(R.string.menu_intent), 2)
 
@@ -102,13 +117,17 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, AddAICalendarActivity::class.java))
     }
 
+    fun moveAlarm(){
+        startActivity(Intent(this, AlarmActivity::class.java))
+    }
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun scheduleWork() {
-        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(1, TimeUnit.HOURS)
+        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(4, TimeUnit.HOURS)
             .addTag(getString(R.string.alarm_workmanager))
             .build()
         val workManager = WorkManager.getInstance(this).apply {
