@@ -56,8 +56,12 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             settingViewModel.settingLiveData.observe(this@MainActivity){setting->
                 Log.d("SettingMainFragment", "MainActivity\nsettingLiveData : $setting")
-                if (setting.alarmSettingStatus)
+                if (setting.alarmSettingStatus) {
                     scheduleWork()
+                } else {
+                    WorkManager.getInstance(this@MainActivity)
+                        .cancelUniqueWork(getString(R.string.alarm_workmanager))
+                }
             }
         }
 
@@ -111,40 +115,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun scheduleWork() {
-        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(1, TimeUnit.HOURS)
+        val workRequest = PeriodicWorkRequestBuilder<AlarmWorkManager>(6, TimeUnit.HOURS)
             .addTag(getString(R.string.alarm_workmanager))
             .build()
-        val workManager = WorkManager.getInstance(this).apply {
-            enqueueUniquePeriodicWork(
-                getString(R.string.alarm_workmanager),
-                ExistingPeriodicWorkPolicy.UPDATE,
-                workRequest
-            )
-            getWorkInfosByTagLiveData(getString(R.string.alarm_workmanager))
-                .observe(this@MainActivity) { workInfoList ->
-                    if (workInfoList.isNullOrEmpty()) {
-                        Log.d("AlarmWorkManager", "Work is scheduled.")
-                    } else {
-                        Log.d("AlarmWorkManager", "Work is already scheduled.")
-                    }
-                }
-        }
 
-        workManager.getWorkInfoByIdLiveData(workRequest.id).observe(this, Observer { workInfo ->
+        val workManager = WorkManager.getInstance(this)
+
+        workManager.enqueueUniquePeriodicWork(
+            getString(R.string.alarm_workmanager),
+            ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
+
+        // (선택) 상태 로그 확인
+        workManager.getWorkInfoByIdLiveData(workRequest.id).observe(this) { workInfo ->
             if (workInfo != null) {
                 when (workInfo.state) {
                     WorkInfo.State.ENQUEUED -> Log.d("AlarmWorkManager", "작업이 대기열에 추가됨")
                     WorkInfo.State.RUNNING -> Log.d("AlarmWorkManager", "작업이 실행 중")
                     WorkInfo.State.SUCCEEDED -> Log.d("AlarmWorkManager", "작업이 성공적으로 완료됨")
-                    WorkInfo.State.FAILED -> Log.d("AlarmWorkManager", "작업이 실패함\ncause by ${workInfo.outputData}")
+                    WorkInfo.State.FAILED -> Log.d("AlarmWorkManager", "작업이 실패함")
                     WorkInfo.State.CANCELLED -> Log.d("AlarmWorkManager", "작업이 취소됨")
                     else -> {}
                 }
             }
-        })
-
+        }
     }
-
     companion object{
         const val TICKET = 1
         const val CALENDAR = 2

@@ -76,52 +76,53 @@ class AlarmWorkManager @Inject constructor(appContext: Context, workerParams: Wo
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    private fun setDdayAlarm(dday : Long, scheduleName : String){
+    private fun setDdayAlarm(dday: Long, scheduleName: String) {
         val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(applicationContext, AlarmReceiver::class.java)
 
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext,
+        val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
+            action = "com.project.how.ACTION_DDAY_ALARM"
+            putExtra("dday", dday)
+            putExtra("scheduleName", scheduleName)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
             REQ_DDAY_ALARM,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
-        Log.d("AlarmWorkManager", "PendingIntent created: $pendingIntent")
-
-        val random = Random.nextInt(45)
-
+        val randomMinute = Random.nextInt(45) // 0~44
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, 10)
-            set(Calendar.MINUTE, random)
+            set(Calendar.MINUTE, randomMinute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
 
-            // 오늘의 오전 10시가 이미 지났다면 내일 오전 10시로 설정
-            if (timeInMillis < System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_YEAR, 1)
-            }
+            if (timeInMillis < System.currentTimeMillis()) add(Calendar.DAY_OF_YEAR, 1)
         }
 
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            pendingIntent)
-
-        Log.d("AlarmWorkManager'", "Alarm set for: ${calendar.timeInMillis} with PendingIntent: $pendingIntent")
+            pendingIntent
+        )
     }
 
-    private fun alarmCancel(){
+    private fun alarmCancel() {
         val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
         val intent = Intent(applicationContext, AlarmReceiver::class.java).apply {
-            putExtra("EXTRA_ALARM_COUNT", 1)
-            putExtra("dday", dday)
-            putExtra("scheduleName", scheduleName)
+            action = "com.project.how.ACTION_DDAY_ALARM"
         }
 
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext,
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext,
             REQ_DDAY_ALARM,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         alarmManager.cancel(pendingIntent)
     }
